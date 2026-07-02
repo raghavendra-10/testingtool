@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, integer, timestamp, jsonb } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, varchar, text, integer, timestamp, jsonb, index } from 'drizzle-orm/pg-core'
 import { projects } from './projects'
 
 export const codeAnalysisRuns = pgTable('code_analysis_runs', {
@@ -36,7 +36,11 @@ export const codeIssues = pgTable('code_issues', {
   recommendation: text('recommendation').notNull(),
   ruleId:         varchar('rule_id', { length: 80 }),              // e.g. SEC-001, SQL-003
   createdAt:      timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_code_issues_run').on(table.runId),
+  index('idx_code_issues_project').on(table.projectId),
+  index('idx_code_issues_project_severity').on(table.projectId, table.severity),
+])
 
 export const schemaAnalysisRuns = pgTable('schema_analysis_runs', {
   id:            uuid('id').primaryKey().defaultRandom(),

@@ -40,7 +40,7 @@ export function ProjectList() {
     return (
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-28 animate-pulse rounded-xl bg-slate-100" />
+          <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
         ))}
       </div>
     )
@@ -50,7 +50,7 @@ export function ProjectList() {
     <div>
       {/* Toolbar */}
       <div className="mb-5 flex items-center justify-between">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {projects?.length ?? 0} {projects?.length === 1 ? 'project' : 'projects'}
         </p>
         <a
@@ -76,7 +76,7 @@ export function ProjectList() {
               if (e.key === 'Escape') { setCreating(false); setNewName('') }
             }}
             placeholder="Project name"
-            className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="flex-1 rounded-lg border border-border bg-white px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
           <button
             onClick={() => newName.trim() && createProject.mutate(newName.trim())}
@@ -87,7 +87,7 @@ export function ProjectList() {
           </button>
           <button
             onClick={() => { setCreating(false); setNewName('') }}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 hover:bg-slate-50 transition-colors"
+            className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-muted-foreground hover:bg-muted/50 transition-colors"
           >
             Cancel
           </button>
@@ -96,7 +96,7 @@ export function ProjectList() {
 
       {/* Empty state */}
       {!creating && projects?.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-white py-20">
           <div className="mb-3 rounded-xl bg-indigo-50 p-3">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <rect x="3" y="3" width="8" height="8" rx="2" fill="#6366f1" opacity="0.5" />
@@ -105,8 +105,8 @@ export function ProjectList() {
               <rect x="13" y="13" width="8" height="8" rx="2" fill="#6366f1" opacity="0.2" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-slate-700">No projects yet</p>
-          <p className="mt-1 text-sm text-slate-400">Create your first project to get started</p>
+          <p className="text-sm font-medium text-foreground">No projects yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">Create your first project to get started</p>
           <button
             onClick={() => setCreating(true)}
             className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
@@ -126,20 +126,20 @@ export function ProjectList() {
             <a
               key={project.id}
               href={`/projects/${project.id}`}
-              className="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-card hover:shadow-card-hover hover:border-slate-300 transition-all duration-150"
+              className="group flex flex-col rounded-xl border border-border bg-white p-4 shadow-card hover:shadow-card-hover hover:border-border transition-all duration-150"
             >
               <div className="flex items-start justify-between gap-2">
-                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                <h3 className="text-sm font-semibold text-foreground group-hover:text-indigo-600 transition-colors">
                   {project.name}
                 </h3>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 shrink-0 text-slate-300 group-hover:text-indigo-400 transition-colors">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 shrink-0 text-muted-foreground group-hover:text-indigo-400 transition-colors">
                   <path d="M2.5 7h9M8 3.5l3.5 3.5L8 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               {project.description && (
-                <p className="mt-1.5 text-xs text-slate-500 line-clamp-2">{project.description}</p>
+                <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{project.description}</p>
               )}
-              <p className="mt-auto pt-3 text-xs text-slate-400">
+              <p className="mt-auto pt-3 text-xs text-muted-foreground">
                 {project.lastActivityAt
                   ? `Updated ${new Date(project.lastActivityAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
                   : `Created ${new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}

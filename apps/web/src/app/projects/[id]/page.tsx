@@ -28,7 +28,7 @@ export default function ProjectPage() {
       {/* Always show upload zone + document list */}
       {!hasProcessing && (
         <>
-          <h2 className="text-sm font-medium text-slate-700">Spec Documents</h2>
+          <h2 className="text-sm font-medium text-foreground">Spec Documents</h2>
           <UploadZone projectId={id} />
         </>
       )}

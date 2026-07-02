@@ -38,7 +38,7 @@ interface DuplicatePair {
 const PRIORITY_COLOR: Record<string, string> = {
   high:   'bg-red-50 text-red-600',
   medium: 'bg-amber-50 text-amber-600',
-  low:    'bg-slate-100 text-slate-500',
+  low:    'bg-muted text-muted-foreground',
 }
 
 export function RequirementList({ projectId }: { projectId: string }) {
@@ -70,18 +70,18 @@ export function RequirementList({ projectId }: { projectId: string }) {
 
   if (isLoading) return (
     <div className="space-y-3">
-      {[1, 2, 3, 4].map(i => <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />)}
+      {[1, 2, 3, 4].map(i => <div key={i} className="h-16 animate-pulse rounded-xl bg-muted" />)}
     </div>
   )
 
   if (!reqs || reqs.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-slate-300" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
         <path d="M8 6h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="2"/>
         <path d="M12 12h8M12 16h6M12 20h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       </svg>
-      <p className="text-sm text-slate-500">No requirements extracted yet.</p>
-      <p className="mt-1 text-xs text-slate-400">Upload a spec document (SRS, PRD) to extract requirements.</p>
+      <p className="text-sm text-muted-foreground">No requirements extracted yet.</p>
+      <p className="mt-1 text-xs text-muted-foreground">Upload a spec document (SRS, PRD) to extract requirements.</p>
     </div>
   )
 
@@ -98,7 +98,7 @@ export function RequirementList({ projectId }: { projectId: string }) {
     <div>
       {/* Header with search */}
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="shrink-0 text-sm font-medium text-slate-700">
+        <h2 className="shrink-0 text-sm font-medium text-foreground">
           Requirements
           <span className="ml-2 rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
             {reqs.length}
@@ -112,9 +112,9 @@ export function RequirementList({ projectId }: { projectId: string }) {
               onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value) setSearchResults(null) }}
               onKeyDown={(e) => e.key === 'Enter' && void handleSearch()}
               placeholder="Semantic search..."
-              className="w-56 rounded-lg border border-slate-200 px-3 py-1.5 pl-8 text-xs text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none transition-colors"
+              className="w-56 rounded-lg border border-border px-3 py-1.5 pl-8 text-xs text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none transition-colors"
             />
-            <svg className="absolute left-2.5 top-2 text-slate-400" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <svg className="absolute left-2.5 top-2 text-muted-foreground" width="12" height="12" viewBox="0 0 12 12" fill="none">
               <circle cx="5" cy="5" r="3.5" stroke="currentColor" strokeWidth="1.5"/>
               <path d="M8 8l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
@@ -129,7 +129,7 @@ export function RequirementList({ projectId }: { projectId: string }) {
           {searchResults && (
             <button
               onClick={() => { setSearchResults(null); setSearchQuery('') }}
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-500 hover:bg-slate-50 transition-colors"
+              className="rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted/50 transition-colors"
             >
               Clear
             </button>
@@ -143,24 +143,24 @@ export function RequirementList({ projectId }: { projectId: string }) {
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-indigo-500">
             Search results for "{searchQuery}" ({searchResults.length})
           </p>
-          <div className="divide-y divide-slate-100 rounded-xl border border-indigo-200 bg-white">
+          <div className="divide-y divide-border rounded-xl border border-indigo-200 bg-white">
             {searchResults.length === 0 ? (
-              <div className="px-4 py-6 text-center text-xs text-slate-400">No matching requirements found.</div>
+              <div className="px-4 py-6 text-center text-xs text-muted-foreground">No matching requirements found.</div>
             ) : searchResults.map((r) => (
               <div key={r.id} className="px-4 py-3 transition-colors hover:bg-indigo-50/30">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="text-sm font-medium text-slate-800">{r.title}</p>
+                  <p className="text-sm font-medium text-foreground">{r.title}</p>
                   <div className="flex shrink-0 items-center gap-1.5">
                     <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
                       {Math.round((r.similarity ?? 0) * 100)}%
                     </span>
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_COLOR[r.priority] ?? 'bg-slate-100 text-slate-500'}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_COLOR[r.priority] ?? 'bg-muted text-muted-foreground'}`}>
                       {r.priority}
                     </span>
                   </div>
                 </div>
                 {r.description && (
-                  <p className="mt-1 text-xs text-slate-500 line-clamp-2">{r.description}</p>
+                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{r.description}</p>
                 )}
               </div>
             ))}
@@ -179,12 +179,12 @@ export function RequirementList({ projectId }: { projectId: string }) {
               <div key={d.id} className="px-4 py-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs text-slate-700">
+                    <p className="text-xs text-foreground">
                       <span className="font-medium">{d.a_title}</span>
-                      <span className="mx-2 text-slate-400">vs</span>
+                      <span className="mx-2 text-muted-foreground">vs</span>
                       <span className="font-medium">{d.b_title}</span>
                     </p>
-                    {d.explanation && <p className="mt-1 text-xs text-slate-500">{d.explanation}</p>}
+                    {d.explanation && <p className="mt-1 text-xs text-muted-foreground">{d.explanation}</p>}
                   </div>
                   <div className="flex shrink-0 items-center gap-1.5">
                     <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
@@ -210,28 +210,28 @@ export function RequirementList({ projectId }: { projectId: string }) {
         <div className="space-y-4">
           {Object.entries(grouped).map(([type, items]) => (
             <div key={type}>
-              <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 {type.replace('_', ' ')}
               </p>
-              <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+              <div className="divide-y divide-border rounded-xl border border-border bg-white">
                 {items.map((req) => (
-                  <div key={req.id} className="px-4 py-3 transition-colors hover:bg-slate-50">
+                  <div key={req.id} className="px-4 py-3 transition-colors hover:bg-muted/50">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-medium text-slate-800">{req.title}</p>
+                      <p className="text-sm font-medium text-foreground">{req.title}</p>
                       <div className="flex shrink-0 items-center gap-1.5">
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_COLOR[req.priority] ?? 'bg-slate-100 text-slate-500'}`}>
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_COLOR[req.priority] ?? 'bg-muted text-muted-foreground'}`}>
                           {req.priority}
                         </span>
-                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-400">
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                           {req.status}
                         </span>
                       </div>
                     </div>
                     {req.description && (
-                      <p className="mt-1 text-xs text-slate-500 line-clamp-2">{req.description}</p>
+                      <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{req.description}</p>
                     )}
                     {req.sourceSection && (
-                      <p className="mt-1 text-xs text-slate-400">§ {req.sourceSection}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">§ {req.sourceSection}</p>
                     )}
                   </div>
                 ))}

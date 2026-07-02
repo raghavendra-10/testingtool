@@ -1,9 +1,13 @@
 import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
+import { ThemeProvider } from 'next-themes'
+import { Toaster } from 'sonner'
 import { Providers } from './providers'
 import './globals.css'
+
+const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const fontMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 export const metadata: Metadata = {
   title: 'Speclyn — From Spec to Certainty',
@@ -13,11 +17,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased">
-        <ClerkProvider>
-          <Providers>{children}</Providers>
-        </ClerkProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ClerkProvider>
+            <Providers>{children}</Providers>
+          </ClerkProvider>
+          <Toaster richColors position="bottom-right" />
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -19,17 +19,17 @@ const CATEGORY_COLOR: Record<string, string> = {
   not_found:          'bg-amber-50 text-amber-600',
   assertion_failure:  'bg-orange-50 text-orange-600',
   schema_mismatch:    'bg-purple-50 text-purple-600',
-  network_error:      'bg-slate-100 text-slate-600',
-  timeout:            'bg-slate-100 text-slate-600',
+  network_error:      'bg-muted text-muted-foreground',
+  timeout:            'bg-muted text-muted-foreground',
   missing_field:      'bg-orange-50 text-orange-600',
   unexpected_status:  'bg-amber-50 text-amber-600',
-  unknown:            'bg-slate-100 text-slate-500',
+  unknown:            'bg-muted text-muted-foreground',
 }
 
 const STATUS_COLOR: Record<string, string> = {
   open:     'bg-red-50 text-red-600',
   resolved: 'bg-green-50 text-green-600',
-  ignored:  'bg-slate-100 text-slate-400',
+  ignored:  'bg-muted text-muted-foreground',
 }
 
 function formatRelative(dateStr: string): string {
@@ -54,18 +54,18 @@ export function DefectList({ projectId }: { projectId: string }) {
 
   if (isLoading) return (
     <div className="space-y-3">
-      {[1,2,3].map(i => <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-100"/>)}
+      {[1,2,3].map(i => <div key={i} className="h-16 animate-pulse rounded-lg bg-muted"/>)}
     </div>
   )
 
   if (!defects || defects.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-slate-300" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
         <path d="M16 4a12 12 0 1 1 0 24A12 12 0 0 1 16 4z" stroke="currentColor" strokeWidth="2"/>
         <path d="M16 10v8M16 21v1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       </svg>
-      <p className="text-sm text-slate-500">No defects found.</p>
-      <p className="mt-1 text-xs text-slate-400">All tests passing — or no tests run yet.</p>
+      <p className="text-sm text-muted-foreground">No defects found.</p>
+      <p className="mt-1 text-xs text-muted-foreground">All tests passing — or no tests run yet.</p>
     </div>
   )
 
@@ -75,22 +75,22 @@ export function DefectList({ projectId }: { projectId: string }) {
     <div className="space-y-4">
       {/* Summary */}
       <div className="flex items-center gap-4">
-        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-          <p className="text-xs text-slate-500">Open defects</p>
+        <div className="rounded-xl border border-border bg-white px-4 py-3">
+          <p className="text-xs text-muted-foreground">Open defects</p>
           <p className="text-xl font-semibold text-red-600">{open}</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-          <p className="text-xs text-slate-500">Total</p>
-          <p className="text-xl font-semibold text-slate-700">{defects.length}</p>
+        <div className="rounded-xl border border-border bg-white px-4 py-3">
+          <p className="text-xs text-muted-foreground">Total</p>
+          <p className="text-xl font-semibold text-foreground">{defects.length}</p>
         </div>
       </div>
 
       {/* List */}
-      <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+      <div className="divide-y divide-border rounded-xl border border-border bg-white">
         {defects.map((defect) => (
-          <div key={defect.id} className="px-4 py-3 transition-colors hover:bg-slate-50">
+          <div key={defect.id} className="px-4 py-3 transition-colors hover:bg-muted/50">
             <div className="flex items-start justify-between gap-3">
-              <p className="text-sm font-medium text-slate-800">{defect.title}</p>
+              <p className="text-sm font-medium text-foreground">{defect.title}</p>
               <div className="flex shrink-0 items-center gap-1.5">
                 {defect.failureCategory && (
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_COLOR[defect.failureCategory] ?? CATEGORY_COLOR['unknown']!}`}>
@@ -103,12 +103,12 @@ export function DefectList({ projectId }: { projectId: string }) {
               </div>
             </div>
             {defect.errorMessage && (
-              <p className="mt-1 truncate font-mono text-xs text-slate-400">{defect.errorMessage}</p>
+              <p className="mt-1 truncate font-mono text-xs text-muted-foreground">{defect.errorMessage}</p>
             )}
             {defect.aiClassification && (
-              <p className="mt-1 text-xs text-slate-500">{defect.aiClassification}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{defect.aiClassification}</p>
             )}
-            <p className="mt-1.5 text-xs text-slate-300">
+            <p className="mt-1.5 text-xs text-muted-foreground">
               {formatRelative(defect.createdAt)}
             </p>
           </div>

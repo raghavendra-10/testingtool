@@ -14,7 +14,7 @@ interface PipelineStage {
 }
 
 const STATUS_ICON: Record<string, React.ReactNode> = {
-  waiting: <span className="h-3 w-3 rounded-full bg-slate-200" />,
+  waiting: <span className="h-3 w-3 rounded-full bg-muted" />,
   processing: (
     <svg className="h-3 w-3 animate-spin text-indigo-500" viewBox="0 0 12 12" fill="none">
       <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
@@ -109,16 +109,16 @@ export function PipelineDashboard({ projectId }: { projectId: string }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-sm font-semibold text-slate-800">
+        <h2 className="text-sm font-semibold text-foreground">
           {hasProcessing ? 'Processing Your Project...' : allDone ? 'Setup Complete' : 'Waiting for Processing'}
         </h2>
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-xs text-muted-foreground">
           {hasProcessing ? 'AI agents are analyzing your specs and code. This may take a few minutes.' : allDone ? 'All pipelines finished. Navigate the sidebar to explore your results.' : 'Pipelines will start shortly.'}
         </p>
       </div>
 
       {/* Progress bar */}
-      <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${allDone ? 'bg-green-500' : 'bg-indigo-500'}`}
           style={{ width: `${Math.round((stages.filter(s => s.status === 'done').length / Math.max(stages.length, 1)) * 100)}%` }}
@@ -126,18 +126,18 @@ export function PipelineDashboard({ projectId }: { projectId: string }) {
       </div>
 
       {/* Pipeline stages */}
-      <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+      <div className="divide-y divide-border rounded-xl border border-border bg-white">
         {stages.map((stage) => (
           <div key={stage.name} className="flex items-center gap-4 px-5 py-4">
             <div className="shrink-0">{STATUS_ICON[stage.status]}</div>
             <div className="min-w-0 flex-1">
-              <p className={`text-sm font-medium ${stage.status === 'done' ? 'text-green-700' : stage.status === 'processing' ? 'text-indigo-700' : stage.status === 'error' ? 'text-red-600' : 'text-slate-400'}`}>
+              <p className={`text-sm font-medium ${stage.status === 'done' ? 'text-green-700' : stage.status === 'processing' ? 'text-indigo-700' : stage.status === 'error' ? 'text-red-600' : 'text-muted-foreground'}`}>
                 {stage.name}
               </p>
-              {stage.detail && <p className="text-xs text-slate-400">{stage.detail}</p>}
+              {stage.detail && <p className="text-xs text-muted-foreground">{stage.detail}</p>}
             </div>
             {stage.count != null && stage.count > 0 && (
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">{stage.count}</span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">{stage.count}</span>
             )}
           </div>
         ))}

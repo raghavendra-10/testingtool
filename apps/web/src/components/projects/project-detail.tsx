@@ -83,8 +83,8 @@ export function ProjectDetail({ projectId, activeTab, setActiveTab }: {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="h-8 w-48 animate-pulse rounded-lg bg-slate-100" />
-        <div className="h-32 animate-pulse rounded-xl bg-slate-100" />
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="h-32 animate-pulse rounded-xl bg-muted" />
       </div>
     )
   }
@@ -92,7 +92,7 @@ export function ProjectDetail({ projectId, activeTab, setActiveTab }: {
   if (!project) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <p className="text-sm text-slate-500">Project not found</p>
+        <p className="text-sm text-muted-foreground">Project not found</p>
         <a href="/projects" className="mt-2 text-sm text-indigo-600 hover:text-indigo-500">
           Back to projects
         </a>
@@ -104,14 +104,14 @@ export function ProjectDetail({ projectId, activeTab, setActiveTab }: {
     <div>
       {/* Header */}
       <div className="mb-6">
-        <nav className="mb-2 flex items-center gap-1.5 text-xs text-slate-400">
-          <a href="/projects" className="hover:text-slate-600 transition-colors">Projects</a>
+        <nav className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <a href="/projects" className="hover:text-muted-foreground transition-colors">Projects</a>
           <span>/</span>
-          <span className="text-slate-600 font-medium truncate max-w-[200px]">{project.name}</span>
+          <span className="text-muted-foreground font-medium truncate max-w-[200px]">{project.name}</span>
         </nav>
-        <h1 className="text-lg font-semibold tracking-tight text-slate-900">{project.name}</h1>
+        <h1 className="text-lg font-semibold tracking-tight text-foreground">{project.name}</h1>
         {project.description && (
-          <p className="mt-0.5 text-sm text-slate-500">{project.description}</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{project.description}</p>
         )}
       </div>
 
@@ -154,7 +154,7 @@ export function ProjectSidebarNav({
     <>
       {/* Project name */}
       <div className="px-3 mb-2">
-        <p className="truncate text-xs font-semibold uppercase tracking-wider text-slate-400">{projectName}</p>
+        <p className="truncate text-xs font-semibold uppercase tracking-wider text-muted-foreground">{projectName}</p>
       </div>
 
       {/* Nav items */}
@@ -165,7 +165,7 @@ export function ProjectSidebarNav({
           className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
             activeTab === item.id
               ? 'bg-indigo-50 text-indigo-600'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
           }`}
         >
           <span className="shrink-0">{item.icon}</span>

@@ -16,10 +16,10 @@ interface OAuthRepo {
 }
 
 const PLATFORM_COLOR: Record<string, string> = {
-  github: 'bg-slate-900 text-white', bitbucket: 'bg-blue-600 text-white', gitlab: 'bg-orange-500 text-white',
+  github: 'bg-zinc-900 text-white', bitbucket: 'bg-blue-600 text-white', gitlab: 'bg-orange-500 text-white',
 }
 const STATUS_COLOR: Record<string, string> = {
-  pending: 'bg-slate-100 text-slate-500', analyzing: 'bg-amber-50 text-amber-600',
+  pending: 'bg-muted text-muted-foreground', analyzing: 'bg-amber-50 text-amber-600',
   connected: 'bg-green-50 text-green-600', error: 'bg-red-50 text-red-600',
 }
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
@@ -95,13 +95,13 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
     },
   })
 
-  if (isLoading) return <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-20 animate-pulse rounded-xl bg-slate-100"/>)}</div>
+  if (isLoading) return <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-20 animate-pulse rounded-xl bg-muted"/>)}</div>
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-sm font-medium text-slate-700">Connected Repositories</h2>
-        <p className="text-xs text-slate-400">Connect with OAuth or paste a token manually</p>
+        <h2 className="text-sm font-medium text-foreground">Connected Repositories</h2>
+        <p className="text-xs text-muted-foreground">Connect with OAuth or paste a token manually</p>
       </div>
 
       {/* OAuth repo picker */}
@@ -120,8 +120,8 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
               {oauthRepos.map(repo => (
                 <div key={repo.cloneUrl} className="flex items-center justify-between px-4 py-2.5 hover:bg-green-50 transition-colors">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{repo.name}</p>
-                    <p className="text-xs text-slate-400">{repo.branch} · {repo.private ? 'private' : 'public'}</p>
+                    <p className="text-sm font-medium text-foreground">{repo.name}</p>
+                    <p className="text-xs text-muted-foreground">{repo.branch} · {repo.private ? 'private' : 'public'}</p>
                   </div>
                   <button onClick={() => connectOauth.mutate(repo)} disabled={connectOauth.isPending}
                     className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-500 disabled:opacity-50 transition-colors">
@@ -130,7 +130,7 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
                 </div>
               ))}
             </div>
-          ) : <p className="text-xs text-slate-400">No repositories found.</p>}
+          ) : <p className="text-xs text-muted-foreground">No repositories found.</p>}
         </div>
       )}
 
@@ -138,7 +138,7 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
       {!oauthSuccess && (
         <div className="flex flex-wrap gap-3">
           <a href={`${API_BASE}/api/v1/oauth/github/authorize?projectId=${projectId}`}
-            className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 transition-colors">
+            className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
             Connect GitHub
           </a>
@@ -148,7 +148,7 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
             Connect Bitbucket
           </a>
           <button onClick={() => setShowManual(!showManual)}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+            className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted/50 transition-colors">
             {showManual ? 'Cancel' : 'Manual Token'}
           </button>
         </div>
@@ -156,19 +156,19 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
 
       {/* Manual form */}
       {showManual && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-3">
+        <div className="rounded-xl border border-border bg-muted/50/50 p-4 space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <select value={manualPlatform} onChange={e => setManualPlatform(e.target.value as typeof manualPlatform)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none">
+              className="rounded-lg border border-border px-3 py-2 text-sm text-foreground focus:border-indigo-400 focus:outline-none">
               <option value="github">GitHub</option><option value="bitbucket">Bitbucket</option><option value="gitlab">GitLab</option>
             </select>
             <input value={manualBranch} onChange={e => setManualBranch(e.target.value)} placeholder="Branch (main)"
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none" />
+              className="rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none" />
           </div>
           <input value={manualUrl} onChange={e => setManualUrl(e.target.value)} placeholder="https://github.com/owner/repo.git"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none" />
+            className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none" />
           <input value={manualToken} onChange={e => setManualToken(e.target.value)} type="password" placeholder="Personal access token"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none" />
+            className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none" />
           <button onClick={() => connectManual.mutate()} disabled={!manualUrl || !manualToken || connectManual.isPending}
             className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-500 disabled:opacity-50 transition-colors">
             {connectManual.isPending ? 'Connecting...' : 'Connect & Analyze'}
@@ -178,7 +178,7 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
 
       {/* Connected repos */}
       {repos && repos.length > 0 && (
-        <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+        <div className="divide-y divide-border rounded-xl border border-border bg-white">
           {repos.map(repo => {
             const stack = repo.stackDetected ? JSON.parse(repo.stackDetected) as { runtime: string; framework: string; language: string } : null
             return (
@@ -186,10 +186,10 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${PLATFORM_COLOR[repo.platform] ?? 'bg-slate-100'}`}>{repo.platform}</span>
-                      <p className="text-sm font-medium text-slate-800 truncate">{repo.repoUrl.replace(/https?:\/\/[^/]+\//, '')}</p>
+                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${PLATFORM_COLOR[repo.platform] ?? 'bg-muted'}`}>{repo.platform}</span>
+                      <p className="text-sm font-medium text-foreground truncate">{repo.repoUrl.replace(/https?:\/\/[^/]+\//, '')}</p>
                     </div>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {repo.branch}{repo.endpointCount ? ` · ${repo.endpointCount} endpoints` : ''}{stack ? ` · ${stack.framework}` : ''}
                     </p>
                   </div>
@@ -199,7 +199,7 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
                     {repo.status === 'connected' && <button onClick={() => reanalyze.mutate(repo.id)} className="text-xs text-indigo-600 hover:underline">Re-analyze</button>}
                     {confirmDisconnectId === repo.id ? (
                       <span className="flex items-center gap-1.5">
-                        <span className="text-xs text-slate-500">Disconnect?</span>
+                        <span className="text-xs text-muted-foreground">Disconnect?</span>
                         <button
                           onClick={() => disconnect.mutate(repo.id)}
                           disabled={disconnect.isPending}
@@ -207,7 +207,7 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
                         >
                           {disconnect.isPending ? 'Removing...' : 'Yes'}
                         </button>
-                        <button onClick={() => setConfirmDisconnectId(null)} className="text-xs text-slate-400 hover:underline">Cancel</button>
+                        <button onClick={() => setConfirmDisconnectId(null)} className="text-xs text-muted-foreground hover:underline">Cancel</button>
                       </span>
                     ) : (
                       <button onClick={() => setConfirmDisconnectId(repo.id)} className="text-xs text-red-500 hover:underline">
@@ -222,12 +222,12 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
                 {editingId === repo.id && (
                   <div className="mt-3 flex gap-2">
                     <input value={editToken} onChange={e => setEditToken(e.target.value)} type="password" placeholder="New access token"
-                      className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-xs placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none" />
+                      className="flex-1 rounded-lg border border-border px-3 py-2 text-xs placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none" />
                     <button onClick={() => updateRepo.mutate(repo.id)} disabled={!editToken || updateRepo.isPending}
                       className="rounded-lg bg-amber-600 px-3 py-2 text-xs font-medium text-white hover:bg-amber-500 disabled:opacity-50 transition-colors">
                       {updateRepo.isPending ? 'Retrying...' : 'Retry'}
                     </button>
-                    <button onClick={() => setEditingId(null)} className="text-xs text-slate-400">Cancel</button>
+                    <button onClick={() => setEditingId(null)} className="text-xs text-muted-foreground">Cancel</button>
                   </div>
                 )}
               </div>

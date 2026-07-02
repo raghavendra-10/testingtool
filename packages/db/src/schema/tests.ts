@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, integer, boolean } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, varchar, text, timestamp, integer, boolean, index } from 'drizzle-orm/pg-core'
 import { projects } from './projects'
 
 export const generatedTests = pgTable('generated_tests', {
@@ -20,7 +20,10 @@ export const generatedTests = pgTable('generated_tests', {
   suiteId:       uuid('suite_id'),               // optional test suite grouping
   createdAt:     timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt:     timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_generated_tests_project').on(table.projectId),
+  index('idx_generated_tests_project_status').on(table.projectId, table.status),
+])
 
 export const testSuites = pgTable('test_suites', {
   id:          uuid('id').primaryKey().defaultRandom(),
@@ -36,4 +39,7 @@ export const coverageLinks = pgTable('coverage_links', {
   requirementId: uuid('requirement_id').notNull(),
   testId:        uuid('test_id').notNull().references(() => generatedTests.id, { onDelete: 'cascade' }),
   createdAt:     timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_coverage_links_requirement').on(table.requirementId),
+  index('idx_coverage_links_test').on(table.testId),
+])

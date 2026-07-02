@@ -5,19 +5,23 @@ import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
 import { useProjectSocket } from '@/hooks/use-project-socket'
 import { DashboardShell } from '@/components/layout/dashboard-shell'
+import {
+  FileText, ListChecks, Plug, GitBranch, FileCheck, Play,
+  PieChart, BarChart3, AlertTriangle, Clock, ClipboardList,
+} from 'lucide-react'
 
 const NAV_ITEMS: Array<{ segment: string; label: string; icon: React.ReactNode }> = [
-  { segment: '', label: 'Spec Docs', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.5"/><path d="M10 2v4h4" stroke="currentColor" strokeWidth="1.5"/></svg> },
-  { segment: 'requirements', label: 'Requirements', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg> },
-  { segment: 'endpoints', label: 'Endpoints', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h5M9 8h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.5"/></svg> },
-  { segment: 'repositories', label: 'Repositories', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 2v12M6 2L2 6M6 2l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M10 14V6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg> },
-  { segment: 'tests', label: 'Tests', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.5"/><path d="M6 9l2 2 3-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-  { segment: 'execute', label: 'Execute', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" fill="currentColor" opacity="0.7"/></svg> },
-  { segment: 'coverage', label: 'Coverage', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M8 2a6 6 0 0 1 0 12" fill="currentColor" opacity="0.3"/></svg> },
-  { segment: 'analysis', label: 'Analysis', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 13V7M7 13V5M11 13V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg> },
-  { segment: 'defects', label: 'Defects', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v6M8 11.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M3 14h10L8 3 3 14z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
-  { segment: 'schedules', label: 'Schedules', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M8 5v3l2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-  { segment: 'audit', label: 'Audit Log', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10v12H3z" stroke="currentColor" strokeWidth="1.5"/><path d="M6 5h4M6 8h4M6 11h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
+  { segment: '', label: 'Spec Docs', icon: <FileText className="h-4 w-4" /> },
+  { segment: 'requirements', label: 'Requirements', icon: <ListChecks className="h-4 w-4" /> },
+  { segment: 'endpoints', label: 'Endpoints', icon: <Plug className="h-4 w-4" /> },
+  { segment: 'repositories', label: 'Repositories', icon: <GitBranch className="h-4 w-4" /> },
+  { segment: 'tests', label: 'Tests', icon: <FileCheck className="h-4 w-4" /> },
+  { segment: 'execute', label: 'Execute', icon: <Play className="h-4 w-4" /> },
+  { segment: 'coverage', label: 'Coverage', icon: <PieChart className="h-4 w-4" /> },
+  { segment: 'analysis', label: 'Analysis', icon: <BarChart3 className="h-4 w-4" /> },
+  { segment: 'defects', label: 'Defects', icon: <AlertTriangle className="h-4 w-4" /> },
+  { segment: 'schedules', label: 'Schedules', icon: <Clock className="h-4 w-4" /> },
+  { segment: 'audit', label: 'Audit Log', icon: <ClipboardList className="h-4 w-4" /> },
 ]
 
 const SETTINGS_ITEMS: Array<{ segment: string; label: string }> = [
@@ -47,7 +51,7 @@ export function ProjectLayout({ projectId, children }: { projectId: string; chil
   const sidebarContent = (
     <>
       <div className="px-3 mb-2">
-        <p className="truncate text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <p className="truncate text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {project?.name ?? 'Loading...'}
         </p>
       </div>
@@ -60,7 +64,7 @@ export function ProjectLayout({ projectId, children }: { projectId: string; chil
             key={item.segment || 'docs'}
             href={href}
             className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              isActive ? 'bg-indigo-50 text-indigo-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              isActive ? 'bg-indigo-50 text-indigo-600' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
             }`}
           >
             <span className="shrink-0">{item.icon}</span>
@@ -70,9 +74,9 @@ export function ProjectLayout({ projectId, children }: { projectId: string; chil
       })}
 
       {/* Settings sub-items */}
-      <div className="mx-3 my-3 border-t border-slate-100" />
+      <div className="mx-3 my-3 border-t border-border" />
       <div className="px-3 mb-1">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-300">Settings</p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Settings</p>
       </div>
       {SETTINGS_ITEMS.map((item) => {
         const href = `${basePath}/${item.segment}`
@@ -82,7 +86,7 @@ export function ProjectLayout({ projectId, children }: { projectId: string; chil
             key={item.segment}
             href={href}
             className={`flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-              isActive ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+              isActive ? 'bg-indigo-50 text-indigo-600' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
             }`}
           >
             {item.label}
@@ -95,10 +99,10 @@ export function ProjectLayout({ projectId, children }: { projectId: string; chil
   return (
     <DashboardShell sidebarContent={sidebarContent}>
       <div>
-        <nav className="mb-4 flex items-center gap-1.5 text-xs text-slate-400">
-          <a href="/projects" className="hover:text-slate-600 transition-colors">Projects</a>
+        <nav className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <a href="/projects" className="hover:text-muted-foreground transition-colors">Projects</a>
           <span>/</span>
-          <span className="text-slate-600 font-medium truncate max-w-[200px]">{project?.name ?? '...'}</span>
+          <span className="text-muted-foreground font-medium truncate max-w-[200px]">{project?.name ?? '...'}</span>
         </nav>
         {children}
       </div>

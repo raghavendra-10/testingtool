@@ -76,7 +76,7 @@ function formatDuration(ms: number): string {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  pending:    'bg-slate-100 text-slate-500',
+  pending:    'bg-muted text-muted-foreground',
   generating: 'bg-amber-50 text-amber-600',
   running:    'bg-blue-50 text-blue-600',
   passed:     'bg-green-50 text-green-600',
@@ -353,24 +353,24 @@ export function RunPanel({ projectId }: { projectId: string }) {
   return (
     <div className="space-y-6">
       {/* Trigger */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <div className="rounded-xl border border-border bg-white p-5">
         {/* Tab toggle */}
-        <div className="mb-4 flex gap-1 rounded-lg bg-slate-100 p-1 w-fit">
+        <div className="mb-4 flex gap-1 rounded-lg bg-muted p-1 w-fit">
           <button
             onClick={() => setTab('api')}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${tab === 'api' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${tab === 'api' ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
           >
             API Tests
           </button>
           <button
             onClick={() => setTab('browser')}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${tab === 'browser' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${tab === 'browser' ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
           >
             Browser Tests
           </button>
           <button
             onClick={() => setTab('performance')}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${tab === 'performance' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${tab === 'performance' ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
           >
             Performance
           </button>
@@ -378,7 +378,7 @@ export function RunPanel({ projectId }: { projectId: string }) {
 
         {tab === 'api' && (
           <>
-            <h3 className="mb-3 text-sm font-medium text-slate-700">Run API Tests</h3>
+            <h3 className="mb-3 text-sm font-medium text-foreground">Run API Tests</h3>
             {envs && envs.length > 0 && (
               <div className="mb-3">
                 <select
@@ -388,7 +388,7 @@ export function RunPanel({ projectId }: { projectId: string }) {
                     const env = envs.find(env => env.id === e.target.value)
                     if (env) setBaseUrl(env.baseUrl)
                   }}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none transition-colors sm:w-auto"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground focus:border-indigo-400 focus:outline-none transition-colors sm:w-auto"
                 >
                   <option value="">Custom URL</option>
                   {envs.map((env) => (
@@ -404,9 +404,9 @@ export function RunPanel({ projectId }: { projectId: string }) {
                   value={baseUrl}
                   onChange={(e) => { setBaseUrl(e.target.value); setSelectedEnvId('') }}
                   placeholder="https://api.example.com"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none transition-colors"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none transition-colors"
                 />
-                <p className="mt-1 text-xs text-slate-400">Base URL of the API to test against</p>
+                <p className="mt-1 text-xs text-muted-foreground">Base URL of the API to test against</p>
               </div>
               <button
                 onClick={() => createRun.mutate()}
@@ -433,28 +433,28 @@ export function RunPanel({ projectId }: { projectId: string }) {
 
         {tab === 'browser' && (
           <>
-            <h3 className="mb-1 text-sm font-medium text-slate-700">Run Browser Tests</h3>
-            <p className="mb-3 text-xs text-slate-400">
+            <h3 className="mb-1 text-sm font-medium text-foreground">Run Browser Tests</h3>
+            <p className="mb-3 text-xs text-muted-foreground">
               Enter page URLs to test. Speclyn will explore each page with AI and generate Playwright tests against your requirements.
             </p>
             <div className="mb-3">
-              <label className="mb-1 block text-xs font-medium text-slate-600">Base URL</label>
+              <label className="mb-1 block text-xs font-medium text-muted-foreground">Base URL</label>
               <input
                 type="url"
                 value={baseUrl}
                 onChange={(e) => { setBaseUrl(e.target.value); setSelectedEnvId('') }}
                 placeholder="https://yourapp.com"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none transition-colors"
               />
             </div>
             <div className="mb-3">
-              <label className="mb-1 block text-xs font-medium text-slate-600">Page URLs <span className="text-slate-400">(one per line, max 10)</span></label>
+              <label className="mb-1 block text-xs font-medium text-muted-foreground">Page URLs <span className="text-muted-foreground">(one per line, max 10)</span></label>
               <textarea
                 value={pageUrlsInput}
                 onChange={(e) => setPageUrlsInput(e.target.value)}
                 placeholder={"https://yourapp.com/login\nhttps://yourapp.com/dashboard\nhttps://yourapp.com/settings"}
                 rows={4}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none transition-colors font-mono"
+                className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none transition-colors font-mono"
               />
             </div>
             <div className="flex gap-3">
@@ -483,30 +483,30 @@ export function RunPanel({ projectId }: { projectId: string }) {
 
         {tab === 'performance' && (
           <>
-            <h3 className="mb-1 text-sm font-medium text-slate-700">Generate k6 Load Test</h3>
-            <p className="mb-4 text-xs text-slate-400">
+            <h3 className="mb-1 text-sm font-medium text-foreground">Generate k6 Load Test</h3>
+            <p className="mb-4 text-xs text-muted-foreground">
               AI generates a k6 script covering all your endpoints. Download and run with{' '}
-              <code className="rounded bg-slate-100 px-1 font-mono text-xs text-slate-700">k6 run script.js</code>.
+              <code className="rounded bg-muted px-1 font-mono text-xs text-foreground">k6 run script.js</code>.
             </p>
             <div className="mb-3 flex gap-4">
               <div className="flex-1">
-                <label className="mb-1 block text-xs font-medium text-slate-600">Target RPS</label>
+                <label className="mb-1 block text-xs font-medium text-muted-foreground">Target RPS</label>
                 <input
                   type="number"
                   min={1} max={10000}
                   value={k6Config.targetRps}
                   onChange={(e) => setK6Config(c => ({ ...c, targetRps: Number(e.target.value) }))}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground focus:border-indigo-400 focus:outline-none"
                 />
               </div>
               <div className="flex-1">
-                <label className="mb-1 block text-xs font-medium text-slate-600">Duration (seconds)</label>
+                <label className="mb-1 block text-xs font-medium text-muted-foreground">Duration (seconds)</label>
                 <input
                   type="number"
                   min={10} max={3600}
                   value={k6Config.durationSeconds}
                   onChange={(e) => setK6Config(c => ({ ...c, durationSeconds: Number(e.target.value) }))}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground focus:border-indigo-400 focus:outline-none"
                 />
               </div>
             </div>
@@ -535,8 +535,8 @@ export function RunPanel({ projectId }: { projectId: string }) {
             </div>
             {k6Error && <p className="mt-2 text-xs text-red-500">{k6Error}</p>}
             {k6Script && (
-              <div className="mt-4 rounded-lg border border-slate-200 bg-slate-950 p-3 overflow-auto max-h-64">
-                <pre className="text-xs text-slate-300 font-mono whitespace-pre">{k6Script.slice(0, 2000)}{k6Script.length > 2000 ? '\n...' : ''}</pre>
+              <div className="mt-4 rounded-lg border border-border bg-zinc-950 p-3 overflow-auto max-h-64">
+                <pre className="text-xs text-muted-foreground font-mono whitespace-pre">{k6Script.slice(0, 2000)}{k6Script.length > 2000 ? '\n...' : ''}</pre>
               </div>
             )}
           </>
@@ -545,13 +545,13 @@ export function RunPanel({ projectId }: { projectId: string }) {
 
       {/* Build log */}
       {(liveSteps.length > 0 || activeRunId) && (
-        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-border bg-white overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <div className="flex items-center gap-3">
-              <p className="text-sm font-medium text-slate-700">Test Log</p>
+              <p className="text-sm font-medium text-foreground">Test Log</p>
               {derivedTotal > 0 && (
-                <span className="text-xs text-slate-400">{completedCount}/{derivedTotal}</span>
+                <span className="text-xs text-muted-foreground">{completedCount}/{derivedTotal}</span>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -565,8 +565,8 @@ export function RunPanel({ projectId }: { projectId: string }) {
 
           {/* Progress bar */}
           {derivedTotal > 0 && (
-            <div className="px-4 py-2 border-b border-slate-50">
-              <div className="h-1 overflow-hidden rounded-full bg-slate-100">
+            <div className="px-4 py-2 border-b border-border">
+              <div className="h-1 overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
@@ -582,8 +582,8 @@ export function RunPanel({ projectId }: { projectId: string }) {
 
           {/* Indeterminate bar during generating phase with no steps yet */}
           {displayStatus === 'generating' && liveSteps.length === 0 && (
-            <div className="px-4 py-2 border-b border-slate-50">
-              <div className="h-1 overflow-hidden rounded-full bg-slate-100">
+            <div className="px-4 py-2 border-b border-border">
+              <div className="h-1 overflow-hidden rounded-full bg-muted">
                 <div className="h-full w-1/3 rounded-full bg-indigo-400 animate-pulse" />
               </div>
             </div>
@@ -600,7 +600,7 @@ export function RunPanel({ projectId }: { projectId: string }) {
           {/* Steps */}
           <div className="max-h-[60vh] overflow-y-auto">
             {liveSteps.length === 0 && !sseError ? (
-              <div className="flex items-center gap-2 px-4 py-4 text-xs text-slate-400">
+              <div className="flex items-center gap-2 px-4 py-4 text-xs text-muted-foreground">
                 <svg className="animate-spin" width="12" height="12" viewBox="0 0 12 12" fill="none">
                   <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
                   <path d="M6 1.5a4.5 4.5 0 0 1 4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -608,11 +608,11 @@ export function RunPanel({ projectId }: { projectId: string }) {
                 Waiting for events...
               </div>
             ) : (
-              <div className="divide-y divide-slate-50">
+              <div className="divide-y divide-border">
                 {liveSteps.map((step, i) => (
                   <div
                     key={step.testName}
-                    className={`px-4 py-2.5 transition-colors ${step.errorMessage ? 'cursor-pointer hover:bg-slate-50' : ''}`}
+                    className={`px-4 py-2.5 transition-colors ${step.errorMessage ? 'cursor-pointer hover:bg-muted/50' : ''}`}
                     onClick={() => step.errorMessage && setExpandedStep(expandedStep === i ? null : i)}
                   >
                     <div className="flex items-start gap-3">
@@ -635,15 +635,15 @@ export function RunPanel({ projectId }: { projectId: string }) {
                       )}
 
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs text-slate-700">{step.testName}</p>
-                        {step.meta && <p className="text-xs text-slate-400">{step.meta}</p>}
+                        <p className="text-xs text-foreground">{step.testName}</p>
+                        {step.meta && <p className="text-xs text-muted-foreground">{step.meta}</p>}
                         {step.errorMessage && expandedStep !== i && (
                           <p className="mt-0.5 truncate text-xs text-red-400">{step.errorMessage}</p>
                         )}
                       </div>
 
                       {step.durationMs != null && (
-                        <span className="shrink-0 text-xs text-slate-400">{step.durationMs}ms</span>
+                        <span className="shrink-0 text-xs text-muted-foreground">{step.durationMs}ms</span>
                       )}
                     </div>
 
@@ -662,16 +662,16 @@ export function RunPanel({ projectId }: { projectId: string }) {
 
           {/* Summary footer */}
           {runDone && activeRun && (
-            <div className="flex items-center gap-4 border-t border-slate-100 px-4 py-3 bg-slate-50">
-              <span className="text-xs font-medium text-slate-600">
+            <div className="flex items-center gap-4 border-t border-border px-4 py-3 bg-muted/50">
+              <span className="text-xs font-medium text-muted-foreground">
                 {activeRun.totalTests} tests
               </span>
               <span className="text-xs text-green-600">{activeRun.passed} passed</span>
               <span className="text-xs text-red-500">{activeRun.failed} failed</span>
               {activeRun.coveragePercent != null && (
-                <span className="text-xs text-slate-500">{activeRun.coveragePercent}% coverage</span>
+                <span className="text-xs text-muted-foreground">{activeRun.coveragePercent}% coverage</span>
               )}
-              <span className="ml-auto text-xs text-slate-400">
+              <span className="ml-auto text-xs text-muted-foreground">
                 {activeRun.startedAt && activeRun.completedAt
                   ? `Completed in ${formatDuration(new Date(activeRun.completedAt).getTime() - new Date(activeRun.startedAt).getTime())}`
                   : activeRun.completedAt
@@ -686,13 +686,13 @@ export function RunPanel({ projectId }: { projectId: string }) {
       {/* Run history */}
       {runs && runs.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-400">Run History</p>
-          <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">Run History</p>
+          <div className="divide-y divide-border rounded-xl border border-border bg-white">
             {runs.map((run) => (
               <div
                 key={run.id}
                 onClick={() => void selectRun(run)}
-                className={`flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${
+                className={`flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors ${
                   activeRunId === run.id ? 'bg-indigo-50/50 border-l-2 border-l-indigo-400' : ''
                 }`}
               >
@@ -700,12 +700,12 @@ export function RunPanel({ projectId }: { projectId: string }) {
                   {run.status}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     {run.totalTests} tests · {run.passed} passed · {run.failed} failed
                     {run.coveragePercent != null && ` · ${run.coveragePercent}% coverage`}
                   </p>
                 </div>
-                <span className="shrink-0 text-xs text-slate-400" title={new Date(run.createdAt).toLocaleString()}>
+                <span className="shrink-0 text-xs text-muted-foreground" title={new Date(run.createdAt).toLocaleString()}>
                   {formatRelative(run.createdAt)}
                 </span>
               </div>

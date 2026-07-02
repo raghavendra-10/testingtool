@@ -14,7 +14,7 @@ interface Document {
 }
 
 const STATUS_CONFIG = {
-  pending:    { label: 'Queued',     color: 'bg-slate-100 text-slate-500' },
+  pending:    { label: 'Queued',     color: 'bg-muted text-muted-foreground' },
   processing: { label: 'Processing', color: 'bg-amber-50 text-amber-600' },
   done:       { label: 'Done',       color: 'bg-green-50 text-green-600' },
   error:      { label: 'Error',      color: 'bg-red-50 text-red-500' },
@@ -53,19 +53,19 @@ export function DocumentList({ projectId }: { projectId: string }) {
   if (!docs || docs.length === 0) return null
 
   return (
-    <div className="mt-3 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+    <div className="mt-3 divide-y divide-border rounded-xl border border-border bg-white">
       {docs.map((doc) => {
         const cfg = STATUS_CONFIG[doc.status] ?? STATUS_CONFIG.pending
         return (
-          <div key={doc.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50">
+          <div key={doc.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50">
             <DocIcon mimeType={doc.mimeType} />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-slate-800">{doc.filename}</p>
-              <p className="text-xs text-slate-400">{formatBytes(doc.sizeBytes)}</p>
+              <p className="truncate text-sm font-medium text-foreground">{doc.filename}</p>
+              <p className="text-xs text-muted-foreground">{formatBytes(doc.sizeBytes)}</p>
             </div>
             <div className="flex items-center gap-3">
               {doc.status === 'done' && doc.requirementCount != null && (
-                <span className="text-xs text-slate-400">{doc.requirementCount} reqs</span>
+                <span className="text-xs text-muted-foreground">{doc.requirementCount} reqs</span>
               )}
               {doc.status === 'processing' && (
                 <svg className="animate-spin text-amber-500" width="14" height="14" viewBox="0 0 14 14" fill="none">

@@ -23,16 +23,16 @@ export function EvidenceGallery({ projectId, stepId }: { projectId: string; step
     queryFn: () => request<EvidenceItem[]>(`/projects/${projectId}/evidence/${stepId}`),
   })
 
-  if (isLoading) return <div className="h-32 animate-pulse rounded-lg bg-slate-100" />
+  if (isLoading) return <div className="h-32 animate-pulse rounded-lg bg-muted" />
   if (!items || items.length === 0) return null
 
   const selected = items[selectedIdx]
 
   return (
-    <div className="mt-2 rounded-lg border border-slate-200 bg-white overflow-hidden">
+    <div className="mt-2 rounded-lg border border-border bg-white overflow-hidden">
       {/* Main screenshot */}
       {selected && selected.mimeType.startsWith('image/') && (
-        <div className="bg-slate-900 flex items-center justify-center p-2">
+        <div className="bg-zinc-900 flex items-center justify-center p-2">
           <img
             src={selected.downloadUrl}
             alt={`Evidence ${selectedIdx + 1}`}
@@ -43,26 +43,26 @@ export function EvidenceGallery({ projectId, stepId }: { projectId: string; step
 
       {/* Thumbnail strip */}
       {items.length > 1 && (
-        <div className="flex gap-1 p-2 overflow-x-auto bg-slate-50">
+        <div className="flex gap-1 p-2 overflow-x-auto bg-muted/50">
           {items.map((item, i) => (
             <button
               key={item.id}
               onClick={() => setSelectedIdx(i)}
               className={`shrink-0 h-12 w-16 rounded border-2 overflow-hidden transition-all ${
-                i === selectedIdx ? 'border-indigo-500' : 'border-transparent hover:border-slate-300'
+                i === selectedIdx ? 'border-indigo-500' : 'border-transparent hover:border-border'
               }`}
             >
               {item.mimeType.startsWith('image/') ? (
                 <img src={item.downloadUrl} alt="" className="h-full w-full object-cover" />
               ) : (
-                <div className="flex items-center justify-center h-full text-[10px] text-slate-400">{item.type}</div>
+                <div className="flex items-center justify-center h-full text-[10px] text-muted-foreground">{item.type}</div>
               )}
             </button>
           ))}
         </div>
       )}
 
-      <div className="px-2 py-1 text-[10px] text-slate-400">
+      <div className="px-2 py-1 text-[10px] text-muted-foreground">
         {items.length} evidence item{items.length !== 1 ? 's' : ''}
         {selected && ` · ${selected.type}`}
       </div>

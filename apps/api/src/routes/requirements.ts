@@ -4,28 +4,30 @@ import { getDb, projects, requirements, requirementDuplicates } from '@speclyn/d
 import { clerkAuth } from '../middleware/clerk-auth.js'
 import type { AuthenticatedRequest } from '../middleware/clerk-auth.js'
 import { embedText } from '@speclyn/agents'
+import { parsePagination, paginatedResponse } from '../lib/pagination.js'
 
 export async function requirementRoutes(app: FastifyInstance): Promise<void> {
   app.addHook('preHandler', clerkAuth)
 
-  // GET /api/v1/projects/:projectId/requirements
   app.get('/api/v1/projects/:projectId/requirements', async (req, reply) => {
     const { userId } = req as AuthenticatedRequest
     const { projectId } = req.params as { projectId: string }
+    const { limit, offset } = parsePagination(req.query as Record<string, unknown>)
 
     const db = getDb()
-    const [project] = await db
-      .select()
-      .from(projects)
+    const [project] = await db.select().from(projects)
       .where(and(eq(projects.id, projectId), eq(projects.ownerId, userId)))
     if (!project) return reply.code(404).send({ success: false, error: { code: 'NOT_FOUND' } })
 
-    const reqs = await db
-      .select()
-      .from(requirements)
+    const [countResult] = await db.select({ count: sql<number>`count(*)::int` }).from(requirements)
       .where(eq(requirements.projectId, projectId))
 
-    reply.send({ success: true, data: reqs })
+    const reqs = await db.select().from(requirements)
+      .where(eq(requirements.projectId, projectId))
+      .limit(limit)
+      .offset(offset)
+
+    reply.send(paginatedResponse(reqs, countResult?.count ?? 0, limit, offset))
   })
 
   // GET /api/v1/projects/:projectId/requirements/search?q=auth

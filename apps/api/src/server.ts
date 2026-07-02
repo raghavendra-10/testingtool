@@ -25,6 +25,10 @@ import { dashboardRoutes } from './routes/dashboard.js'
 import { repositoryRoutes } from './routes/repositories.js'
 import { evidenceRoutes } from './routes/evidence.js'
 import { oauthRoutes } from './routes/oauth.js'
+import { performanceRoutes } from './routes/performance.js'
+import { templateRoutes } from './routes/templates.js'
+import { codeAnalysisRoutes } from './routes/code-analysis.js'
+import rateLimit from '@fastify/rate-limit'
 import { PINO_REDACT_PATHS } from '@speclyn/shared-types'
 
 const app = Fastify({
@@ -41,6 +45,14 @@ await app.register(cors, {
 
 await app.register(multipart)
 await app.register(websocket)
+await app.register(rateLimit, {
+  max: 120,
+  timeWindow: '1 minute',
+  keyGenerator: (req) => {
+    const authReq = req as { userId?: string }
+    return authReq.userId ?? req.ip
+  },
+})
 
 // Allow empty JSON bodies (e.g. POST with no payload)
 app.addContentTypeParser('application/json', { parseAs: 'string' }, (req, body, done) => {
@@ -72,6 +84,9 @@ await app.register(dashboardRoutes)
 await app.register(repositoryRoutes)
 await app.register(evidenceRoutes)
 await app.register(oauthRoutes)
+await app.register(performanceRoutes)
+await app.register(templateRoutes)
+await app.register(codeAnalysisRoutes)
 
 app.setErrorHandler((error, _req, reply) => {
   app.log.error(error)

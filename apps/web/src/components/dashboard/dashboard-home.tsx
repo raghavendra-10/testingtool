@@ -20,7 +20,7 @@ interface DashboardData {
 
 const STATUS_DOT: Record<string, string> = {
   passed: 'bg-green-400', failed: 'bg-red-400', error: 'bg-red-400',
-  generating: 'bg-amber-400', running: 'bg-blue-400', pending: 'bg-slate-300',
+  generating: 'bg-amber-400', running: 'bg-blue-400', pending: 'bg-muted',
 }
 
 function timeAgo(d: string): string {
@@ -64,7 +64,7 @@ export function DashboardHome() {
 
   if (isLoading) return (
     <div className="grid grid-cols-4 gap-4 auto-rows-[140px]">
-      {[1,2,3,4,5,6].map(i => <div key={i} className={`animate-pulse rounded-2xl bg-slate-100 ${i <= 2 ? 'col-span-2 row-span-2' : ''}`} />)}
+      {[1,2,3,4,5,6].map(i => <div key={i} className={`animate-pulse rounded-2xl bg-muted ${i <= 2 ? 'col-span-2 row-span-2' : ''}`} />)}
     </div>
   )
 
@@ -77,13 +77,13 @@ export function DashboardHome() {
 
   return (
     <div className="space-y-2">
-      <h1 className="text-lg font-semibold text-slate-900">Dashboard</h1>
+      <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
 
       {/* Bento grid */}
       <div className="grid grid-cols-4 gap-4 auto-rows-[140px]">
 
         {/* Hero: Pass Rate — 2x2 */}
-        <div className="col-span-2 row-span-2 rounded-2xl border border-slate-200 bg-gradient-to-br from-indigo-50 to-white p-6 flex flex-col justify-between">
+        <div className="col-span-2 row-span-2 rounded-2xl border border-border bg-gradient-to-br from-indigo-50 to-white p-6 flex flex-col justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-indigo-400">Overall Pass Rate</p>
             <p className={`mt-2 text-5xl font-bold tracking-tight ${data.overallPassRate >= 80 ? 'text-green-600' : data.overallPassRate >= 50 ? 'text-amber-600' : 'text-red-600'}`}>
@@ -91,83 +91,83 @@ export function DashboardHome() {
             </p>
           </div>
           <div className="flex items-end justify-between">
-            <p className="text-xs text-slate-400">Last {data.recentRuns.length} runs</p>
+            <p className="text-xs text-muted-foreground">Last {data.recentRuns.length} runs</p>
             <Sparkline runs={data.recentRuns} />
           </div>
         </div>
 
         {/* Projects count */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 flex flex-col justify-between">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Projects</p>
-          <p className="text-4xl font-bold text-slate-800">{data.totalProjects}</p>
+        <div className="rounded-2xl border border-border bg-white p-5 flex flex-col justify-between">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Projects</p>
+          <p className="text-4xl font-bold text-foreground">{data.totalProjects}</p>
         </div>
 
         {/* Active schedules */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 flex flex-col justify-between">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Active Schedules</p>
+        <div className="rounded-2xl border border-border bg-white p-5 flex flex-col justify-between">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Active Schedules</p>
           <p className="text-4xl font-bold text-indigo-600">{data.activeSchedules}</p>
         </div>
 
         {/* Open defects */}
-        <div className={`rounded-2xl border p-5 flex flex-col justify-between ${openDefects > 0 ? 'border-red-200 bg-red-50/50' : 'border-slate-200 bg-white'}`}>
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Open Defects</p>
+        <div className={`rounded-2xl border p-5 flex flex-col justify-between ${openDefects > 0 ? 'border-red-200 bg-red-50/50' : 'border-border bg-white'}`}>
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Open Defects</p>
           <p className={`text-4xl font-bold ${openDefects > 0 ? 'text-red-600' : 'text-green-600'}`}>{openDefects}</p>
         </div>
 
         {/* Avg coverage */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 flex flex-col justify-between">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Avg Coverage</p>
+        <div className="rounded-2xl border border-border bg-white p-5 flex flex-col justify-between">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Avg Coverage</p>
           <div>
             <p className="text-4xl font-bold text-indigo-600">{avgCoverage}%</p>
-            <div className="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+            <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
               <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${avgCoverage}%` }} />
             </div>
           </div>
         </div>
 
         {/* Recent runs — 2x2 */}
-        <div className="col-span-2 row-span-2 rounded-2xl border border-slate-200 bg-white flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Recent Runs</p>
+        <div className="col-span-2 row-span-2 rounded-2xl border border-border bg-white flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between border-b border-border px-5 py-3">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Recent Runs</p>
             <a href="/projects" className="text-xs text-indigo-500 hover:text-indigo-600 transition-colors">View all</a>
           </div>
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
+          <div className="flex-1 overflow-y-auto divide-y divide-border">
             {data.recentRuns.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-xs text-slate-400">No runs yet</div>
+              <div className="flex items-center justify-center h-full text-xs text-muted-foreground">No runs yet</div>
             ) : data.recentRuns.map(run => (
-              <a key={run.id} href={`/projects/${run.projectId}`} className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 transition-colors">
-                <span className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[run.status] ?? 'bg-slate-300'}`} />
+              <a key={run.id} href={`/projects/${run.projectId}`} className="flex items-center gap-3 px-5 py-3 hover:bg-muted/50 transition-colors">
+                <span className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[run.status] ?? 'bg-muted'}`} />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-700 truncate">{run.projectName}</p>
-                  <p className="text-xs text-slate-400">{run.passed}/{run.totalTests} passed</p>
+                  <p className="text-sm font-medium text-foreground truncate">{run.projectName}</p>
+                  <p className="text-xs text-muted-foreground">{run.passed}/{run.totalTests} passed</p>
                 </div>
-                <span className="text-xs text-slate-400">{timeAgo(run.createdAt)}</span>
+                <span className="text-xs text-muted-foreground">{timeAgo(run.createdAt)}</span>
               </a>
             ))}
           </div>
         </div>
 
         {/* Recent defects — 2x2 */}
-        <div className="col-span-2 row-span-2 rounded-2xl border border-slate-200 bg-white flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Recent Defects</p>
+        <div className="col-span-2 row-span-2 rounded-2xl border border-border bg-white flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between border-b border-border px-5 py-3">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Recent Defects</p>
           </div>
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
+          <div className="flex-1 overflow-y-auto divide-y divide-border">
             {data.recentDefects.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <p className="text-2xl">&#10003;</p>
-                  <p className="mt-1 text-xs text-slate-400">All clear</p>
+                  <p className="mt-1 text-xs text-muted-foreground">All clear</p>
                 </div>
               </div>
             ) : data.recentDefects.map(d => (
-              <a key={d.id} href={`/projects/${d.projectId}`} className="flex items-start gap-3 px-5 py-3 hover:bg-slate-50 transition-colors">
+              <a key={d.id} href={`/projects/${d.projectId}`} className="flex items-start gap-3 px-5 py-3 hover:bg-muted/50 transition-colors">
                 <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-red-400" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-slate-700 truncate">{d.title}</p>
-                  <p className="text-xs text-slate-400">{d.projectName} · {d.failureCategory?.replace(/_/g, ' ')}</p>
+                  <p className="text-sm text-foreground truncate">{d.title}</p>
+                  <p className="text-xs text-muted-foreground">{d.projectName} · {d.failureCategory?.replace(/_/g, ' ')}</p>
                 </div>
-                <span className="text-xs text-slate-400 mt-0.5">{timeAgo(d.createdAt)}</span>
+                <span className="text-xs text-muted-foreground mt-0.5">{timeAgo(d.createdAt)}</span>
               </a>
             ))}
           </div>

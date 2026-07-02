@@ -52,7 +52,7 @@ const TYPE_COLOR: Record<string, string> = {
   api_key:       'bg-blue-50 text-blue-600',
   basic_auth:    'bg-amber-50 text-amber-600',
   oauth2:        'bg-green-50 text-green-600',
-  custom_header: 'bg-slate-100 text-slate-600',
+  custom_header: 'bg-muted text-muted-foreground',
 }
 
 type Section = 'environments' | 'credentials' | 'api-keys' | 'webhooks' | 'integrations'
@@ -183,8 +183,8 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
       <div>
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-medium text-slate-700">Environments</h3>
-            <p className="text-xs text-slate-400">Configure API environments (dev, staging, prod) with their base URLs</p>
+            <h3 className="text-sm font-medium text-foreground">Environments</h3>
+            <p className="text-xs text-muted-foreground">Configure API environments (dev, staging, prod) with their base URLs</p>
           </div>
           <button
             onClick={() => setShowEnvForm(!showEnvForm)}
@@ -200,13 +200,13 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
               <input
                 value={envName} onChange={(e) => setEnvName(e.target.value)}
                 placeholder="e.g. Production"
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none"
+                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none"
               />
               <input
                 value={envBaseUrl} onChange={(e) => setEnvBaseUrl(e.target.value)}
                 placeholder="https://api.example.com"
                 type="url"
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none"
+                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none"
               />
             </div>
             <button
@@ -220,23 +220,23 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
         )}
 
         {envsLoading ? (
-          <div className="space-y-2">{[1,2].map(i => <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100"/>)}</div>
+          <div className="space-y-2">{[1,2].map(i => <div key={i} className="h-12 animate-pulse rounded-lg bg-muted"/>)}</div>
         ) : !envs || envs.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 py-8 text-center">
-            <p className="text-xs text-slate-400">No environments configured. Add one to get started.</p>
+          <div className="rounded-xl border border-dashed border-border py-8 text-center">
+            <p className="text-xs text-muted-foreground">No environments configured. Add one to get started.</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+          <div className="divide-y divide-border rounded-xl border border-border bg-white">
             {envs.map((env) => (
-              <div key={env.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50">
+              <div key={env.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-slate-800">{env.name}</p>
+                    <p className="text-sm font-medium text-foreground">{env.name}</p>
                     {env.isDefault && (
                       <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs text-indigo-600">default</span>
                     )}
                   </div>
-                  <p className="truncate text-xs font-mono text-slate-400">{env.baseUrl}</p>
+                  <p className="truncate text-xs font-mono text-muted-foreground">{env.baseUrl}</p>
                 </div>
                 <button
                   onClick={() => deleteEnv.mutate(env.id)}
@@ -257,8 +257,8 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
       <div>
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-medium text-slate-700">Credentials</h3>
-            <p className="text-xs text-slate-400">API keys and tokens are encrypted at rest (AES-256-GCM)</p>
+            <h3 className="text-sm font-medium text-foreground">Credentials</h3>
+            <p className="text-xs text-muted-foreground">API keys and tokens are encrypted at rest (AES-256-GCM)</p>
           </div>
           <button
             onClick={() => setShowCredForm(!showCredForm)}
@@ -274,11 +274,11 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
               <input
                 value={credName} onChange={(e) => setCredName(e.target.value)}
                 placeholder="e.g. Production API Key"
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none"
+                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none"
               />
               <select
                 value={credType} onChange={(e) => setCredType(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none"
+                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground focus:border-indigo-400 focus:outline-none"
               >
                 {CRED_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
@@ -286,11 +286,11 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
                 value={credValue} onChange={(e) => setCredValue(e.target.value)}
                 placeholder="Enter secret value"
                 type="password"
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none"
+                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none"
               />
               <select
                 value={credEnvId} onChange={(e) => setCredEnvId(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none"
+                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground focus:border-indigo-400 focus:outline-none"
               >
                 <option value="">All environments</option>
                 {envs?.map((env) => <option key={env.id} value={env.id}>{env.name}</option>)}
@@ -308,23 +308,23 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
         )}
 
         {credsLoading ? (
-          <div className="space-y-2">{[1,2].map(i => <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100"/>)}</div>
+          <div className="space-y-2">{[1,2].map(i => <div key={i} className="h-12 animate-pulse rounded-lg bg-muted"/>)}</div>
         ) : !creds || creds.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 py-8 text-center">
-            <p className="text-xs text-slate-400">No credentials stored. Add API keys or tokens for your test endpoints.</p>
+          <div className="rounded-xl border border-dashed border-border py-8 text-center">
+            <p className="text-xs text-muted-foreground">No credentials stored. Add API keys or tokens for your test endpoints.</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+          <div className="divide-y divide-border rounded-xl border border-border bg-white">
             {creds.map((cred) => (
-              <div key={cred.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50">
+              <div key={cred.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-slate-800">{cred.name}</p>
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${TYPE_COLOR[cred.type] ?? 'bg-slate-100 text-slate-500'}`}>
+                    <p className="text-sm font-medium text-foreground">{cred.name}</p>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${TYPE_COLOR[cred.type] ?? 'bg-muted text-muted-foreground'}`}>
                       {cred.type.replace('_', ' ')}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted-foreground">
                     {cred.preview ? `••••••••${cred.preview}` : '••••••••••••'}
                     {cred.environmentId && envs ? ` · ${envs.find(e => e.id === cred.environmentId)?.name ?? 'Unknown env'}` : ' · All environments'}
                   </p>
@@ -348,8 +348,8 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
       <div>
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-medium text-slate-700">API Keys</h3>
-            <p className="text-xs text-slate-400">For CLI access and CI/CD pipelines</p>
+            <h3 className="text-sm font-medium text-foreground">API Keys</h3>
+            <p className="text-xs text-muted-foreground">For CLI access and CI/CD pipelines</p>
           </div>
           <button
             onClick={() => { setShowKeyForm(!showKeyForm); setNewKeyValue(null) }}
@@ -363,7 +363,7 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
         {newKeyValue && (
           <div className="mb-4 rounded-xl border border-green-200 bg-green-50 p-4">
             <p className="text-xs font-medium text-green-800 mb-2">Copy your API key now — it won't be shown again:</p>
-            <code className="block rounded bg-white p-2 text-xs font-mono text-slate-800 break-all border border-green-200">
+            <code className="block rounded bg-white p-2 text-xs font-mono text-foreground break-all border border-green-200">
               {newKeyValue}
             </code>
             <p className="mt-2 text-xs text-green-600">
@@ -377,7 +377,7 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
             <input
               value={keyName} onChange={(e) => setKeyName(e.target.value)}
               placeholder="e.g. CI Pipeline Key"
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none"
+              className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none"
             />
             <button
               onClick={() => addApiKey.mutate()}
@@ -390,12 +390,12 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
         )}
 
         {apiKeysData && apiKeysData.length > 0 && (
-          <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+          <div className="divide-y divide-border rounded-xl border border-border bg-white">
             {apiKeysData.map((key) => (
-              <div key={key.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50">
+              <div key={key.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-800">{key.name}</p>
-                  <p className="text-xs text-slate-400 font-mono">
+                  <p className="text-sm font-medium text-foreground">{key.name}</p>
+                  <p className="text-xs text-muted-foreground font-mono">
                     {key.keyPrefix}
                     {key.lastUsedAt ? ` · Last used ${new Date(key.lastUsedAt).toLocaleDateString()}` : ' · Never used'}
                   </p>
@@ -417,11 +417,11 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
       {show('webhooks') && <>
       {/* Outbound Webhooks Section */}
       <div>
-        <h3 className="mb-1 text-sm font-medium text-slate-700">Outbound Webhooks</h3>
-        <p className="mb-3 text-xs text-slate-400">Send test results to external systems when events occur</p>
-        <div className="rounded-xl border border-dashed border-slate-200 py-10 text-center">
-          <p className="text-xs text-slate-400">Webhook management coming soon.</p>
-          <p className="mt-1 text-xs text-slate-300">Events: run_completed, defect_created, coverage_changed</p>
+        <h3 className="mb-1 text-sm font-medium text-foreground">Outbound Webhooks</h3>
+        <p className="mb-3 text-xs text-muted-foreground">Send test results to external systems when events occur</p>
+        <div className="rounded-xl border border-dashed border-border py-10 text-center">
+          <p className="text-xs text-muted-foreground">Webhook management coming soon.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Events: run_completed, defect_created, coverage_changed</p>
         </div>
       </div>
       </>}
@@ -429,18 +429,18 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
       {show('integrations') && <>
       {/* CI/CD Integration Section */}
       <div>
-        <h3 className="mb-1 text-sm font-medium text-slate-700">CI/CD Integration</h3>
-        <p className="mb-3 text-xs text-slate-400">Connect GitHub or Bitbucket to run tests on every PR</p>
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
+        <h3 className="mb-1 text-sm font-medium text-foreground">CI/CD Integration</h3>
+        <p className="mb-3 text-xs text-muted-foreground">Connect GitHub or Bitbucket to run tests on every PR</p>
+        <div className="rounded-xl border border-border bg-white p-4 space-y-3">
           <div>
-            <p className="text-xs font-medium text-slate-600 mb-1">CLI Usage</p>
-            <code className="block rounded bg-slate-50 p-2 text-xs font-mono text-slate-600">
+            <p className="text-xs font-medium text-muted-foreground mb-1">CLI Usage</p>
+            <code className="block rounded bg-muted/50 p-2 text-xs font-mono text-muted-foreground">
               npx @speclyn/cli run --project {projectId} --api-key YOUR_KEY --base-url https://api.example.com
             </code>
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-600 mb-1">GitHub Actions</p>
-            <pre className="rounded bg-slate-50 p-2 text-xs font-mono text-slate-600 whitespace-pre overflow-x-auto">{`- name: Run Speclyn Tests
+            <p className="text-xs font-medium text-muted-foreground mb-1">GitHub Actions</p>
+            <pre className="rounded bg-muted/50 p-2 text-xs font-mono text-muted-foreground whitespace-pre overflow-x-auto">{`- name: Run Speclyn Tests
   run: npx @speclyn/cli run \\
     --project ${projectId} \\
     --api-key \${{ secrets.SPECLYN_API_KEY }} \\
@@ -448,14 +448,14 @@ export function SettingsPanel({ projectId, section }: { projectId: string; secti
     --threshold 80`}</pre>
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-600 mb-1">GitHub Webhook URL</p>
-            <code className="block rounded bg-slate-50 p-2 text-xs font-mono text-slate-600 break-all">
+            <p className="text-xs font-medium text-muted-foreground mb-1">GitHub Webhook URL</p>
+            <code className="block rounded bg-muted/50 p-2 text-xs font-mono text-muted-foreground break-all">
               {'<your-api-domain>'}/api/v1/webhooks/github
             </code>
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-600 mb-1">Bitbucket Webhook URL</p>
-            <code className="block rounded bg-slate-50 p-2 text-xs font-mono text-slate-600 break-all">
+            <p className="text-xs font-medium text-muted-foreground mb-1">Bitbucket Webhook URL</p>
+            <code className="block rounded bg-muted/50 p-2 text-xs font-mono text-muted-foreground break-all">
               {'<your-api-domain>'}/api/v1/webhooks/bitbucket
             </code>
           </div>

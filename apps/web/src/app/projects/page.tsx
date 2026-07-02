@@ -12,8 +12,8 @@ export default async function ProjectsPage() {
   return (
     <DashboardShell activePath="/projects">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold tracking-tight text-slate-900">Projects</h1>
-        <p className="mt-0.5 text-sm text-slate-500">Manage and monitor your API test suites</p>
+        <h1 className="text-lg font-semibold tracking-tight text-foreground">Projects</h1>
+        <p className="mt-0.5 text-sm text-muted-foreground">Manage and monitor your API test suites</p>
       </div>
       <ProjectList />
     </DashboardShell>

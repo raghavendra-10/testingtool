@@ -77,9 +77,9 @@ export function UploadZone({ projectId }: { projectId: string }) {
   ]
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+    <div className="rounded-xl border border-border bg-white overflow-hidden">
       {/* Tab bar */}
-      <div className="flex border-b border-slate-100">
+      <div className="flex border-b border-border">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -87,7 +87,7 @@ export function UploadZone({ projectId }: { projectId: string }) {
             className={`flex-1 px-4 py-2.5 text-xs font-medium transition-colors ${
               activeTab === tab.id
                 ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/30'
-                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
             }`}
           >
             {tab.label}
@@ -102,7 +102,7 @@ export function UploadZone({ projectId }: { projectId: string }) {
           onDragLeave={() => setDragOver(false)}
           onDrop={(e) => { e.preventDefault(); setDragOver(false); handleFiles(e.dataTransfer.files) }}
           onClick={() => !upload.isPending && inputRef.current?.click()}
-          className={`cursor-pointer px-6 py-8 transition-all ${dragOver ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}
+          className={`cursor-pointer px-6 py-8 transition-all ${dragOver ? 'bg-indigo-50' : 'hover:bg-muted/50'}`}
         >
           <input ref={inputRef} type="file" accept={ACCEPTED} multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
           {upload.isPending ? (
@@ -111,7 +111,7 @@ export function UploadZone({ projectId }: { projectId: string }) {
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
                 <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
               </svg>
-              <p className="text-sm text-slate-500">Uploading...</p>
+              <p className="text-sm text-muted-foreground">Uploading...</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 text-center">
@@ -122,8 +122,8 @@ export function UploadZone({ projectId }: { projectId: string }) {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-700">Drop your spec here, or <span className="text-indigo-600">browse</span></p>
-                <p className="mt-0.5 text-xs text-slate-400">PDF, DOCX, Markdown, OpenAPI (JSON/YAML), Postman Collection, TXT · Max {MAX_MB}MB</p>
+                <p className="text-sm font-medium text-foreground">Drop your spec here, or <span className="text-indigo-600">browse</span></p>
+                <p className="mt-0.5 text-xs text-muted-foreground">PDF, DOCX, Markdown, OpenAPI (JSON/YAML), Postman Collection, TXT · Max {MAX_MB}MB</p>
               </div>
             </div>
           )}
@@ -140,12 +140,12 @@ export function UploadZone({ projectId }: { projectId: string }) {
               value={importUrl}
               onChange={(e) => setImportUrl(e.target.value)}
               placeholder="https://petstore.swagger.io/v2/swagger.json"
-              className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none transition-colors"
+              className="flex-1 rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none transition-colors"
             />
             <select
               value={importType}
               onChange={(e) => setImportType(e.target.value as typeof importType)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none"
+              className="rounded-lg border border-border px-3 py-2 text-sm text-foreground focus:border-indigo-400 focus:outline-none"
             >
               <option value="auto">Auto-detect</option>
               <option value="swagger">Swagger/OpenAPI</option>
@@ -153,7 +153,7 @@ export function UploadZone({ projectId }: { projectId: string }) {
             </select>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-400">Paste a Swagger URL, OpenAPI spec URL, or Postman collection URL</p>
+            <p className="text-xs text-muted-foreground">Paste a Swagger URL, OpenAPI spec URL, or Postman collection URL</p>
             <button
               onClick={() => urlImport.mutate()}
               disabled={!importUrl || urlImport.isPending}
@@ -174,17 +174,17 @@ export function UploadZone({ projectId }: { projectId: string }) {
             value={pasteName}
             onChange={(e) => setPasteName(e.target.value)}
             placeholder="Document name (e.g. API Requirements)"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none transition-colors"
+            className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none transition-colors"
           />
           <textarea
             value={pasteContent}
             onChange={(e) => setPasteContent(e.target.value)}
             placeholder="Paste your requirements, spec text, or API documentation here..."
             rows={8}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none resize-y transition-colors"
+            className="w-full rounded-lg border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none resize-y transition-colors"
           />
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-400">{pasteContent.length.toLocaleString()} characters</p>
+            <p className="text-xs text-muted-foreground">{pasteContent.length.toLocaleString()} characters</p>
             <button
               onClick={() => textImport.mutate()}
               disabled={pasteContent.length < 10 || textImport.isPending}

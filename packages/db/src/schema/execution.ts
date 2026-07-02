@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, integer, real, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, varchar, text, integer, real, timestamp, index } from 'drizzle-orm/pg-core'
 import { projects } from './projects'
 import { generatedTests } from './tests'
 
@@ -18,7 +18,10 @@ export const executionRuns = pgTable('execution_runs', {
   startedAt:        timestamp('started_at', { withTimezone: true }),
   completedAt:      timestamp('completed_at', { withTimezone: true }),
   createdAt:        timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_execution_runs_project').on(table.projectId),
+  index('idx_execution_runs_status').on(table.projectId, table.status),
+])
 
 export const executionSteps = pgTable('execution_steps', {
   id:           uuid('id').primaryKey().defaultRandom(),
@@ -31,7 +34,10 @@ export const executionSteps = pgTable('execution_steps', {
   startedAt:    timestamp('started_at', { withTimezone: true }),
   completedAt:  timestamp('completed_at', { withTimezone: true }),
   createdAt:    timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_execution_steps_run').on(table.runId),
+  index('idx_execution_steps_run_status').on(table.runId, table.status),
+])
 
 export const evidence = pgTable('evidence', {
   id:          uuid('id').primaryKey().defaultRandom(),
@@ -55,4 +61,7 @@ export const defects = pgTable('defects', {
   aiClassification: text('ai_classification'),
   status:          varchar('status', { length: 20 }).notNull().default('open'),
   createdAt:       timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_defects_project').on(table.projectId),
+  index('idx_defects_run').on(table.runId),
+])

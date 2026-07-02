@@ -78,51 +78,51 @@ export function TestEditor({ projectId }: { projectId: string }) {
 
   if (isLoading) return (
     <div className="space-y-3">
-      {[1, 2, 3].map(i => <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100" />)}
+      {[1, 2, 3].map(i => <div key={i} className="h-12 animate-pulse rounded-lg bg-muted" />)}
     </div>
   )
 
   if (!tests || tests.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-slate-300" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
         <path d="M8 4h10l6 6v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="2"/>
         <path d="M12 18l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
-      <p className="text-sm text-slate-500">No tests generated yet.</p>
-      <p className="mt-1 text-xs text-slate-400">Run tests from the Execute tab first.</p>
+      <p className="text-sm text-muted-foreground">No tests generated yet.</p>
+      <p className="mt-1 text-xs text-muted-foreground">Run tests from the Execute tab first.</p>
     </div>
   )
 
   return (
     <div className="flex gap-4 h-[calc(100vh-12rem)]">
       {/* Test list sidebar */}
-      <div className="w-72 shrink-0 overflow-y-auto rounded-xl border border-slate-200 bg-white">
-        <div className="sticky top-0 border-b border-slate-100 bg-white px-3 py-2.5">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+      <div className="w-72 shrink-0 overflow-y-auto rounded-xl border border-border bg-white">
+        <div className="sticky top-0 border-b border-border bg-white px-3 py-2.5">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Tests ({tests.length})
           </p>
         </div>
-        <div className="divide-y divide-slate-50">
+        <div className="divide-y divide-border">
           {tests.map((test) => (
             <button
               key={test.id}
               onClick={() => { setSelectedTestId(test.id); setEditedCode(null); setShowQualityNotes(false) }}
               className={`w-full px-3 py-2.5 text-left transition-colors ${
-                selectedTestId === test.id ? 'bg-indigo-50' : 'hover:bg-slate-50'
+                selectedTestId === test.id ? 'bg-indigo-50' : 'hover:bg-muted/50'
               }`}
             >
               <div className="flex items-start gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-medium text-slate-700">{test.name}</p>
+                  <p className="truncate text-xs font-medium text-foreground">{test.name}</p>
                   <div className="mt-0.5 flex items-center gap-1.5">
-                    <span className={`text-xs ${test.status === 'active' ? 'text-green-500' : 'text-slate-400'}`}>
+                    <span className={`text-xs ${test.status === 'active' ? 'text-green-500' : 'text-muted-foreground'}`}>
                       {test.status}
                     </span>
                     {test.isEdited && (
                       <span className="rounded bg-blue-50 px-1 py-0.5 text-[10px] text-blue-600">edited</span>
                     )}
                     {test.qualityScore != null && (
-                      <span className={`text-xs ${QUALITY_COLOR[test.qualityScore] ?? 'text-slate-400'}`}>
+                      <span className={`text-xs ${QUALITY_COLOR[test.qualityScore] ?? 'text-muted-foreground'}`}>
                         {'★'.repeat(test.qualityScore)}{'☆'.repeat(5 - test.qualityScore)}
                       </span>
                     )}
@@ -135,20 +135,20 @@ export function TestEditor({ projectId }: { projectId: string }) {
       </div>
 
       {/* Editor panel */}
-      <div className="flex-1 flex flex-col rounded-xl border border-slate-200 bg-white overflow-hidden">
+      <div className="flex-1 flex flex-col rounded-xl border border-border bg-white overflow-hidden">
         {selectedTest ? (
           <>
             {/* Toolbar */}
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5">
+            <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
               <div className="flex items-center gap-3">
-                <p className="text-sm font-medium text-slate-700 truncate max-w-md">{selectedTest.name}</p>
+                <p className="text-sm font-medium text-foreground truncate max-w-md">{selectedTest.name}</p>
                 {selectedTest.isEdited && (
                   <span className="rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">manually edited</span>
                 )}
                 {selectedTest.qualityScore != null && (
                   <button
                     onClick={() => setShowQualityNotes(!showQualityNotes)}
-                    className={`text-xs ${QUALITY_COLOR[selectedTest.qualityScore] ?? 'text-slate-400'} hover:underline`}
+                    className={`text-xs ${QUALITY_COLOR[selectedTest.qualityScore] ?? 'text-muted-foreground'} hover:underline`}
                   >
                     {'★'.repeat(selectedTest.qualityScore)}{'☆'.repeat(5 - selectedTest.qualityScore)} quality
                   </button>
@@ -170,8 +170,8 @@ export function TestEditor({ projectId }: { projectId: string }) {
 
             {/* Quality notes panel */}
             {showQualityNotes && selectedTest.qualityNotes && (
-              <div className="border-b border-slate-100 bg-slate-50 px-4 py-3 max-h-32 overflow-y-auto">
-                <pre className="text-xs text-slate-600 whitespace-pre-wrap font-mono">{selectedTest.qualityNotes}</pre>
+              <div className="border-b border-border bg-muted/50 px-4 py-3 max-h-32 overflow-y-auto">
+                <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-mono">{selectedTest.qualityNotes}</pre>
               </div>
             )}
 
@@ -203,7 +203,7 @@ export function TestEditor({ projectId }: { projectId: string }) {
             </div>
           </>
         ) : (
-          <div className="flex flex-1 items-center justify-center text-xs text-slate-400">
+          <div className="flex flex-1 items-center justify-center text-xs text-muted-foreground">
             Select a test from the list to view and edit its code
           </div>
         )}
