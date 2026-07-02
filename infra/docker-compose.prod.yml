@@ -1,0 +1,116 @@
+# Production Docker Compose — self-hosted deployment
+# Usage: docker compose -f docker-compose.prod.yml up -d
+
+version: '3.9'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${DB_USER:-speclyn}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-speclyn}
+    ports: ['5432:5432']
+    volumes: ['pgdata:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-speclyn}']
+      interval: 5s
+
+  redis:
+    image: redis:7-alpine
+    ports: ['6379:6379']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+
+  api:
+    build: { context: .., dockerfile: Dockerfile, target: api }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    ports: ['3001:3001']
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  web:
+    build: { context: .., dockerfile: Dockerfile, target: web }
+    env_file: ../.env.production
+    ports: ['3000:3000']
+    depends_on: [api]
+
+  worker-doc-parser:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/doc-parser/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-test-generator:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/test-generator/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-api-runner:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/api-runner/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-reporter:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/reporter/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-scheduler:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/scheduler/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-repo-analyzer:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/repo-analyzer/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-browser-test-generator:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/browser-test-generator/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-browser-runner:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/browser-runner/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+  worker-code-analyzer:
+    build: { context: .., dockerfile: Dockerfile, target: worker, args: { WORKER_PATH: workers/code-analyzer/src/index.ts } }
+    env_file: ../.env.production
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-speclyn}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-speclyn}
+      REDIS_URL: redis://redis:6379
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+
+volumes:
+  pgdata:

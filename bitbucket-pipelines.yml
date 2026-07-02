@@ -1,0 +1,65 @@
+image: node:22-slim
+
+definitions:
+  services:
+    docker:
+      memory: 3072
+
+  steps:
+    - step: &typecheck
+        name: Typecheck
+        size: 2x
+        caches:
+          - node
+        script:
+          - corepack enable && corepack prepare pnpm@10.28.1 --activate
+          - pnpm install --frozen-lockfile
+          - pnpm turbo typecheck --concurrency=4
+
+    - step: &deploy-api
+        name: Deploy API
+        size: 2x
+        services:
+          - docker
+        script:
+          - apt-get update && apt-get install -y awscli
+          - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+          - docker build --no-cache --platform linux/amd64 --target api -t $ECR_REGISTRY/speclyn/api:latest -t $ECR_REGISTRY/speclyn/api:$BITBUCKET_COMMIT .
+          - docker push $ECR_REGISTRY/speclyn/api:latest
+          - docker push $ECR_REGISTRY/speclyn/api:$BITBUCKET_COMMIT
+          - aws ecs update-service --cluster speclyn --service speclyn-api --force-new-deployment
+
+    - step: &deploy-web
+        name: Deploy Web
+        size: 2x
+        services:
+          - docker
+        script:
+          - apt-get update && apt-get install -y awscli
+          - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+          - docker build --no-cache --platform linux/amd64 --target web --build-arg NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL --build-arg NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY -t $ECR_REGISTRY/speclyn/web:latest -t $ECR_REGISTRY/speclyn/web:$BITBUCKET_COMMIT .
+          - docker push $ECR_REGISTRY/speclyn/web:latest
+          - docker push $ECR_REGISTRY/speclyn/web:$BITBUCKET_COMMIT
+          - aws ecs update-service --cluster speclyn --service speclyn-web --force-new-deployment
+
+    - step: &deploy-workers
+        name: Deploy Workers
+        size: 2x
+        services:
+          - docker
+        script:
+          - apt-get update && apt-get install -y awscli
+          - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+          - docker build --no-cache --platform linux/amd64 --target worker --build-arg WORKER_PATH=workers/combined/src/index.ts -t $ECR_REGISTRY/speclyn/worker-combined:latest -t $ECR_REGISTRY/speclyn/worker-combined:$BITBUCKET_COMMIT .
+          - docker push $ECR_REGISTRY/speclyn/worker-combined:latest
+          - docker push $ECR_REGISTRY/speclyn/worker-combined:$BITBUCKET_COMMIT
+          - aws ecs update-service --cluster speclyn --service speclyn-combined-worker --force-new-deployment
+
+pipelines:
+  branches:
+    main:
+      - step: *typecheck
+      - parallel:
+          - step: *deploy-api
+          - step: *deploy-web
+          - step: *deploy-workers

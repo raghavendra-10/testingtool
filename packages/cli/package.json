@@ -1,0 +1,22 @@
+{
+  "name": "@speclyn/cli",
+  "version": "0.1.0",
+  "description": "Speclyn CLI — run API tests from your terminal or CI pipeline",
+  "type": "module",
+  "bin": {
+    "speclyn": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^13.1.0",
+    "eventsource": "^3.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

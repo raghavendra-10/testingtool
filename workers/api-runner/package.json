@@ -1,0 +1,26 @@
+{
+  "name": "@speclyn/worker-api-runner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=../../.env --import tsx/esm --watch src/index.ts",
+    "start": "node --env-file=../../.env --import tsx/esm src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1067.0",
+    "@speclyn/db": "workspace:*",
+    "@speclyn/shared-types": "workspace:*",
+    "@speclyn/vault": "workspace:*",
+    "bullmq": "^5.53.3",
+    "drizzle-orm": "0.43.1",
+    "execa": "^9.5.2",
+    "ioredis": "^5.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

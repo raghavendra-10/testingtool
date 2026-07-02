@@ -1,0 +1,36 @@
+// All error codes in one place — never use raw strings in routes
+
+export const ErrorCode = {
+  // Auth
+  MISSING_TOKEN: 'MISSING_TOKEN',
+  INVALID_TOKEN: 'INVALID_TOKEN',
+  MISSING_STREAM_TOKEN: 'MISSING_STREAM_TOKEN',
+  TOKEN_RUN_MISMATCH: 'TOKEN_RUN_MISMATCH',
+
+  // Access
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+
+  // Validation
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+
+  // Resources
+  PROJECT_NOT_FOUND: 'PROJECT_NOT_FOUND',
+  DOCUMENT_NOT_FOUND: 'DOCUMENT_NOT_FOUND',
+  CREDENTIAL_NOT_FOUND: 'CREDENTIAL_NOT_FOUND',
+  RUN_NOT_FOUND: 'RUN_NOT_FOUND',
+
+  // Jobs / workers
+  PARSE_FAILED: 'PARSE_FAILED',
+  CLONE_FAILED: 'CLONE_FAILED',
+  GENERATION_FAILED: 'GENERATION_FAILED',
+  COMPILE_FAILED: 'COMPILE_FAILED',
+
+  // Security
+  SSRF_BLOCKED: 'SSRF_BLOCKED',
+
+  // Budget
+  BUDGET_EXCEEDED: 'BUDGET_EXCEEDED',
+} as const
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]

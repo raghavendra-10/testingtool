@@ -1,0 +1,28 @@
+version: 1
+applications:
+  - appRoot: apps/web
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - cd ../..
+            - corepack enable
+            - corepack prepare pnpm@10.28.1 --activate
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            - cd apps/web
+            - npx next build --no-lint
+            - bash scripts/copy-next-for-amplify.sh
+            - cp .next/required-server-files.json ./required-server-files.json
+      artifacts:
+        baseDirectory: .
+        files:
+          - .next/**/*
+          - node_modules/next/**/*
+          - package.json
+          - next.config.mjs
+          - required-server-files.json
+      cache:
+        paths:
+          - .next/cache/**/*

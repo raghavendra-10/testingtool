@@ -1,0 +1,27 @@
+{
+  "name": "@speclyn/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "migrate": "node --env-file=../../.env --import tsx/esm src/migrate.ts",
+    "generate": "drizzle-kit generate",
+    "studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.43.1",
+    "pg": "8.16.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.11.14",
+    "drizzle-kit": "0.31.1",
+    "typescript": "^5.8.3",
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4"
+  }
+}

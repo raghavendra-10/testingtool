@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment files — NEVER commit secrets
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+.turbo/
+
+# Cache
+.cache/
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test artifacts (root-level only, not src/components/coverage/)
+**/coverage/
+!**/src/**/coverage/
+playwright-report/
+test-results/
+
+# Temp clones (never commit)
+tmp/
+/tmp/clones/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Drizzle
+drizzle/meta/
+
+# Certificates
+*.pem
