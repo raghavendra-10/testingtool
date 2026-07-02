@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { ClipboardList, Search } from 'lucide-react'
 
 interface Requirement {
   id: string
@@ -76,10 +77,7 @@ export function RequirementList({ projectId }: { projectId: string }) {
 
   if (!reqs || reqs.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <path d="M8 6h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="2"/>
-        <path d="M12 12h8M12 16h6M12 20h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      </svg>
+      <ClipboardList className="mb-3 h-8 w-8 text-muted-foreground" />
       <p className="text-sm text-muted-foreground">No requirements extracted yet.</p>
       <p className="mt-1 text-xs text-muted-foreground">Upload a spec document (SRS, PRD) to extract requirements.</p>
     </div>
@@ -114,10 +112,7 @@ export function RequirementList({ projectId }: { projectId: string }) {
               placeholder="Semantic search..."
               className="w-56 rounded-lg border border-border px-3 py-1.5 pl-8 text-xs text-foreground placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none transition-colors"
             />
-            <svg className="absolute left-2.5 top-2 text-muted-foreground" width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <circle cx="5" cy="5" r="3.5" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M8 8l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+            <Search className="absolute left-2.5 top-2 h-3 w-3 text-muted-foreground" />
           </div>
           <button
             onClick={() => void handleSearch()}

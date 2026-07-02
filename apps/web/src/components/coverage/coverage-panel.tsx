@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { AlertCircle, Minus } from 'lucide-react'
 
 interface CoverageMatrix {
   summary: {
@@ -86,10 +87,7 @@ export function CoveragePanel({ projectId }: { projectId: string }) {
 
   if (!data || data.matrix.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <path d="M16 4a12 12 0 1 1 0 24A12 12 0 0 1 16 4z" stroke="currentColor" strokeWidth="2"/>
-        <path d="M16 10v8M16 21v1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      </svg>
+      <AlertCircle className="mb-3 h-8 w-8 text-muted-foreground" />
       <p className="text-sm text-muted-foreground">No coverage data yet.</p>
       <p className="mt-1 text-xs text-muted-foreground">Extract requirements and run tests to see coverage.</p>
     </div>
@@ -162,9 +160,7 @@ export function CoveragePanel({ projectId }: { projectId: string }) {
               <div className="divide-y divide-red-100 rounded-xl border border-red-200 bg-red-50/30">
                 {regressionData.regressions.map((r) => (
                   <div key={r.testId} className="flex items-center gap-2 px-4 py-2.5">
-                    <svg className="shrink-0 text-red-500" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M6 1v6M6 9v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
+                    <AlertCircle className="h-3 w-3 shrink-0 text-red-500" />
                     <p className="text-xs text-foreground">{r.testName}</p>
                     <span className="ml-auto text-[10px] text-red-400">was passing</span>
                   </div>
@@ -181,9 +177,7 @@ export function CoveragePanel({ projectId }: { projectId: string }) {
               <div className="divide-y divide-amber-100 rounded-xl border border-amber-200 bg-amber-50/30">
                 {regressionData.flaky.map((f) => (
                   <div key={f.testId} className="flex items-center gap-2 px-4 py-2.5">
-                    <svg className="shrink-0 text-amber-500" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M2 6h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="2 2"/>
-                    </svg>
+                    <Minus className="h-3 w-3 shrink-0 text-amber-500" />
                     <p className="text-xs text-foreground">{f.testName}</p>
                     <span className="ml-auto text-[10px] text-amber-400">inconsistent</span>
                   </div>
@@ -203,9 +197,7 @@ export function CoveragePanel({ projectId }: { projectId: string }) {
           <div className="divide-y divide-orange-100 rounded-xl border border-orange-200 bg-orange-50/30">
             {gaps.gaps.map((gap) => (
               <div key={gap.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-orange-50">
-                <svg className="shrink-0 text-orange-400" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M6 1v6M6 9v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <AlertCircle className="h-3 w-3 shrink-0 text-orange-400" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm text-foreground">{gap.title}</p>
                   {gap.description && <p className="truncate text-xs text-muted-foreground">{gap.description}</p>}

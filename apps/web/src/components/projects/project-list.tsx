@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Plus, LayoutGrid, ArrowRight } from 'lucide-react'
 
 interface Project {
   id: string
@@ -57,9 +58,7 @@ export function ProjectList() {
           href="/projects/new"
           className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 active:bg-indigo-700 transition-colors"
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 1v12M1 7h12" stroke="white" strokeWidth="2" strokeLinecap="round" />
-          </svg>
+          <Plus className="h-3.5 w-3.5" />
           New Project
         </a>
       </div>
@@ -98,12 +97,7 @@ export function ProjectList() {
       {!creating && projects?.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-white py-20">
           <div className="mb-3 rounded-xl bg-indigo-50 p-3">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="8" height="8" rx="2" fill="#6366f1" opacity="0.5" />
-              <rect x="13" y="3" width="8" height="8" rx="2" fill="#6366f1" opacity="0.5" />
-              <rect x="3" y="13" width="8" height="8" rx="2" fill="#6366f1" opacity="0.5" />
-              <rect x="13" y="13" width="8" height="8" rx="2" fill="#6366f1" opacity="0.2" />
-            </svg>
+            <LayoutGrid className="h-6 w-6 text-indigo-500" />
           </div>
           <p className="text-sm font-medium text-foreground">No projects yet</p>
           <p className="mt-1 text-sm text-muted-foreground">Create your first project to get started</p>
@@ -111,9 +105,7 @@ export function ProjectList() {
             onClick={() => setCreating(true)}
             className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M7 1v12M1 7h12" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <Plus className="h-3.5 w-3.5" />
             Create project
           </button>
         </div>
@@ -132,9 +124,7 @@ export function ProjectList() {
                 <h3 className="text-sm font-semibold text-foreground group-hover:text-indigo-600 transition-colors">
                   {project.name}
                 </h3>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 shrink-0 text-muted-foreground group-hover:text-indigo-400 transition-colors">
-                  <path d="M2.5 7h9M8 3.5l3.5 3.5L8 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground group-hover:text-indigo-400 transition-colors" />
               </div>
               {project.description && (
                 <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{project.description}</p>

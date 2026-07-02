@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Loader2, Check, X } from 'lucide-react'
 
 interface Run {
   id: string
@@ -601,10 +602,7 @@ export function RunPanel({ projectId }: { projectId: string }) {
           <div className="max-h-[60vh] overflow-y-auto">
             {liveSteps.length === 0 && !sseError ? (
               <div className="flex items-center gap-2 px-4 py-4 text-xs text-muted-foreground">
-                <svg className="animate-spin" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
-                  <path d="M6 1.5a4.5 4.5 0 0 1 4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
+                <Loader2 className="h-3 w-3 animate-spin" />
                 Waiting for events...
               </div>
             ) : (
@@ -618,20 +616,13 @@ export function RunPanel({ projectId }: { projectId: string }) {
                     <div className="flex items-start gap-3">
                       {/* Status icon */}
                       {step.status === 'running' && (
-                        <svg className="mt-0.5 shrink-0 animate-spin text-blue-500" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                          <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
-                          <path d="M6 1.5a4.5 4.5 0 0 1 4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
+                        <Loader2 className="mt-0.5 h-3 w-3 shrink-0 animate-spin text-blue-500" />
                       )}
                       {step.status === 'passed' && (
-                        <svg className="mt-0.5 shrink-0 text-green-500" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                          <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                        <Check className="mt-0.5 h-3 w-3 shrink-0 text-green-500" />
                       )}
                       {step.status === 'failed' && (
-                        <svg className="mt-0.5 shrink-0 text-red-500" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                          <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-                        </svg>
+                        <X className="mt-0.5 h-3 w-3 shrink-0 text-red-500" />
                       )}
 
                       <div className="min-w-0 flex-1">

@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
 import { useAuth } from '@clerk/nextjs'
+import { Loader2, Upload } from 'lucide-react'
 
 const ACCEPTED = '.pdf,.docx,.json,.yaml,.yml,.txt,.md'
 const MAX_MB = 20
@@ -107,19 +108,13 @@ export function UploadZone({ projectId }: { projectId: string }) {
           <input ref={inputRef} type="file" accept={ACCEPTED} multiple className="hidden" onChange={(e) => handleFiles(e.target.files)} />
           {upload.isPending ? (
             <div className="flex flex-col items-center gap-2">
-              <svg className="animate-spin text-indigo-500" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
-                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-              </svg>
+              <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
               <p className="text-sm text-muted-foreground">Uploading...</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="rounded-lg bg-indigo-50 p-2.5 text-indigo-600">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 13V4M10 4L7 7M10 4l3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M3 14v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                </svg>
+                <Upload className="h-5 w-5" />
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground">Drop your spec here, or <span className="text-indigo-600">browse</span></p>

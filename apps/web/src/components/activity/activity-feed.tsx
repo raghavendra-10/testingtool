@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Play, AlertCircle } from 'lucide-react'
 
 interface ActivityItem {
   type: 'run' | 'defect'
@@ -68,13 +69,9 @@ export function ActivityFeed() {
               className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-muted/50"
             >
               {item.type === 'run' ? (
-                <svg className={`mt-0.5 shrink-0 ${STATUS_COLOR[item.status ?? 'pending']}`} width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M4 3l8 4-8 4V3z" fill="currentColor" opacity="0.8"/>
-                </svg>
+                <Play className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${STATUS_COLOR[item.status ?? 'pending']}`} />
               ) : (
-                <svg className="mt-0.5 shrink-0 text-red-400" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M7 2v6M7 10v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" />
               )}
               <div className="min-w-0 flex-1">
                 {item.type === 'run' ? (

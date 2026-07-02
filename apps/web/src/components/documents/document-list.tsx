@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Loader2, FileText } from 'lucide-react'
 
 interface Document {
   id: string
@@ -27,19 +28,11 @@ function formatBytes(bytes: number) {
 }
 
 function DocIcon({ mimeType }: { mimeType: string }) {
-  const color = mimeType.includes('pdf') ? '#ef4444'
-    : mimeType.includes('word') ? '#3b82f6'
-    : '#6366f1'
+  const color = mimeType.includes('pdf') ? 'text-red-500'
+    : mimeType.includes('word') ? 'text-blue-500'
+    : 'text-indigo-500'
 
-  return (
-    <svg width="28" height="32" viewBox="0 0 28 32" fill="none">
-      <path d="M4 0h14l10 10v18a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill={color} opacity="0.12" />
-      <path d="M18 0l10 10H22a4 4 0 0 1-4-4V0z" fill={color} opacity="0.3" />
-      <text x="4" y="24" fontSize="7" fontWeight="700" fill={color} fontFamily="system-ui">
-        {mimeType.includes('pdf') ? 'PDF' : mimeType.includes('word') ? 'DOC' : mimeType.includes('yaml') ? 'YML' : 'JSON'}
-      </text>
-    </svg>
-  )
+  return <FileText className={`h-7 w-7 ${color}`} />
 }
 
 export function DocumentList({ projectId }: { projectId: string }) {
@@ -68,10 +61,7 @@ export function DocumentList({ projectId }: { projectId: string }) {
                 <span className="text-xs text-muted-foreground">{doc.requirementCount} reqs</span>
               )}
               {doc.status === 'processing' && (
-                <svg className="animate-spin text-amber-500" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="2" opacity="0.2" />
-                  <path d="M7 1.5a5.5 5.5 0 0 1 5.5 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-500" />
               )}
               <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${cfg.color}`}>
                 {cfg.label}

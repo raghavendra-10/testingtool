@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { AlertCircle } from 'lucide-react'
 
 interface Defect {
   id: string
@@ -60,10 +61,7 @@ export function DefectList({ projectId }: { projectId: string }) {
 
   if (!defects || defects.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <path d="M16 4a12 12 0 1 1 0 24A12 12 0 0 1 16 4z" stroke="currentColor" strokeWidth="2"/>
-        <path d="M16 10v8M16 21v1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      </svg>
+      <AlertCircle className="mb-3 h-8 w-8 text-muted-foreground" />
       <p className="text-sm text-muted-foreground">No defects found.</p>
       <p className="mt-1 text-xs text-muted-foreground">All tests passing — or no tests run yet.</p>
     </div>

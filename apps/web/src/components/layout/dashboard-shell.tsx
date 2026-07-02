@@ -3,6 +3,7 @@
 import { UserButton } from '@clerk/nextjs'
 import { useUIStore } from '@/store/ui'
 import { Logo, SpeclynMark } from '@/components/ui/logo'
+import { ChevronLeft, LayoutGrid, FolderOpen, FileText, Activity, Menu } from 'lucide-react'
 
 interface DashboardShellProps {
   children: React.ReactNode
@@ -35,9 +36,7 @@ export function DashboardShell({ children, sidebarContent, activePath }: Dashboa
                   href="/projects"
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-muted-foreground transition-colors"
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                    <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <ChevronLeft className="h-4 w-4 shrink-0" />
                   Back to Projects
                 </a>
               </div>
@@ -45,10 +44,10 @@ export function DashboardShell({ children, sidebarContent, activePath }: Dashboa
           ) : (
             <div className="space-y-0.5">
               {[
-                { href: '/dashboard', label: 'Dashboard', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg> },
-                { href: '/projects', label: 'Projects', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 4v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4M2 4l2-2h8l2 2" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/></svg> },
-                { href: '/templates', label: 'Templates', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.3"/><path d="M10 2v4h4" stroke="currentColor" strokeWidth="1.3"/><path d="M6 9h4M6 11h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg> },
-                { href: '/activity', label: 'Activity', icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 7l4-4 4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+                { href: '/dashboard', label: 'Dashboard', icon: <LayoutGrid className="h-4 w-4" /> },
+                { href: '/projects', label: 'Projects', icon: <FolderOpen className="h-4 w-4" /> },
+                { href: '/templates', label: 'Templates', icon: <FileText className="h-4 w-4" /> },
+                { href: '/activity', label: 'Activity', icon: <Activity className="h-4 w-4" /> },
               ].map(item => {
                 const isActive = activePath === item.href
                 return (
@@ -82,9 +81,7 @@ export function DashboardShell({ children, sidebarContent, activePath }: Dashboa
           className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-muted-foreground transition-colors"
           aria-label="Toggle sidebar"
         >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
+          <Menu className="h-[18px] w-[18px]" />
         </button>
 
         {!sidebarOpen && (

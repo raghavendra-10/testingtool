@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Check } from 'lucide-react'
 
 interface RepoConnection {
   id: string; platform: string; repoUrl: string; branch: string; status: string
@@ -108,9 +109,7 @@ export function RepositoryPanel({ projectId }: { projectId: string }) {
       {oauthSuccess && oauthKey && (
         <div className="rounded-xl border border-green-200 bg-green-50/50 p-4 space-y-3">
           <div className="flex items-center gap-2">
-            <svg className="text-green-500" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M2 8l4 4 8-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <Check className="h-4 w-4 text-green-500" />
             <p className="text-sm font-medium text-green-800">{oauthPlatform === 'github' ? 'GitHub' : 'Bitbucket'} connected! Select repos to analyze:</p>
           </div>
           {loadingOauthRepos ? (

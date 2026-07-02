@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Clock } from 'lucide-react'
 
 interface Schedule {
   id: string
@@ -119,10 +120,7 @@ export function ScheduleList({ projectId }: { projectId: string }) {
 
       {!schedules || schedules.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <circle cx="16" cy="16" r="12" stroke="currentColor" strokeWidth="2"/>
-            <path d="M16 10v6l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <Clock className="mb-3 h-8 w-8 text-muted-foreground" />
           <p className="text-sm text-muted-foreground">No scheduled runs configured.</p>
           <p className="mt-1 text-xs text-muted-foreground">Create a schedule to test your API automatically.</p>
         </div>

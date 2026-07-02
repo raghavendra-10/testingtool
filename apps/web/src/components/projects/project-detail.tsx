@@ -14,6 +14,7 @@ import { SettingsPanel } from '@/components/settings/settings-panel'
 import { TestEditor } from '@/components/tests/test-editor'
 import { AuditLog } from '@/components/audit/audit-log'
 import { ScheduleList } from '@/components/schedules/schedule-list'
+import { FileText, List, Radio, FileCheck, Play, PieChart, AlertTriangle, Clock, ClipboardList, Settings } from 'lucide-react'
 
 interface Project {
   id: string
@@ -27,43 +28,43 @@ type Tab = 'docs' | 'requirements' | 'endpoints' | 'tests' | 'execute' | 'covera
 const NAV_ITEMS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   {
     id: 'docs', label: 'Spec Docs',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.5"/><path d="M10 2v4h4" stroke="currentColor" strokeWidth="1.5"/></svg>,
+    icon: <FileText className="h-4 w-4" />,
   },
   {
     id: 'requirements', label: 'Requirements',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>,
+    icon: <List className="h-4 w-4" />,
   },
   {
     id: 'endpoints', label: 'Endpoints',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h5M9 8h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.5"/></svg>,
+    icon: <Radio className="h-4 w-4" />,
   },
   {
     id: 'tests', label: 'Tests',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.5"/><path d="M6 9l2 2 3-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    icon: <FileCheck className="h-4 w-4" />,
   },
   {
     id: 'execute', label: 'Execute',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" fill="currentColor" opacity="0.7"/></svg>,
+    icon: <Play className="h-4 w-4" />,
   },
   {
     id: 'coverage', label: 'Coverage',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M8 2a6 6 0 0 1 0 12" fill="currentColor" opacity="0.3"/></svg>,
+    icon: <PieChart className="h-4 w-4" />,
   },
   {
     id: 'defects', label: 'Defects',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v6M8 11.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M3 14h10L8 3 3 14z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>,
+    icon: <AlertTriangle className="h-4 w-4" />,
   },
   {
     id: 'schedules', label: 'Schedules',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M8 5v3l2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    icon: <Clock className="h-4 w-4" />,
   },
   {
     id: 'audit', label: 'Audit Log',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10v12H3z" stroke="currentColor" strokeWidth="1.5"/><path d="M6 5h4M6 8h4M6 11h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>,
+    icon: <ClipboardList className="h-4 w-4" />,
   },
   {
     id: 'settings', label: 'Settings',
-    icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>,
+    icon: <Settings className="h-4 w-4" />,
   },
 ]
 

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
-import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { Providers } from './providers'
 import './globals.css'
@@ -17,14 +16,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
       <body className="font-sans antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <ClerkProvider>
-            <Providers>{children}</Providers>
-          </ClerkProvider>
-          <Toaster richColors position="bottom-right" />
-        </ThemeProvider>
+        <ClerkProvider>
+          <Providers>{children}</Providers>
+        </ClerkProvider>
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   )

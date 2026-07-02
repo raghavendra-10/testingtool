@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useApiClient } from '@/hooks/use-api-client'
 import { useAuth } from '@clerk/nextjs'
+import { Loader2 } from 'lucide-react'
 
 type Step = 1 | 2 | 3 | 4 | 5
 
@@ -510,10 +511,7 @@ export function SetupWizard() {
           >
             {launching ? (
               <span className="flex items-center gap-2">
-                <svg className="animate-spin" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
-                  <path d="M7 1.5a5.5 5.5 0 0 1 5.5 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 Launching...
               </span>
             ) : 'Launch Project'}

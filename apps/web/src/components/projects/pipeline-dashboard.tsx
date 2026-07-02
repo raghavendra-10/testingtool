@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Loader2, Check, X } from 'lucide-react'
 
 interface Document { id: string; filename: string; status: string; requirementCount: number | null }
 interface RepoConn { id: string; platform: string; repoUrl: string; status: string; endpointCount: number | null }
@@ -15,22 +16,9 @@ interface PipelineStage {
 
 const STATUS_ICON: Record<string, React.ReactNode> = {
   waiting: <span className="h-3 w-3 rounded-full bg-muted" />,
-  processing: (
-    <svg className="h-3 w-3 animate-spin text-indigo-500" viewBox="0 0 12 12" fill="none">
-      <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
-      <path d="M6 1.5a4.5 4.5 0 0 1 4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ),
-  done: (
-    <svg className="h-3 w-3 text-green-500" viewBox="0 0 12 12" fill="none">
-      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  error: (
-    <svg className="h-3 w-3 text-red-500" viewBox="0 0 12 12" fill="none">
-      <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
+  processing: <Loader2 className="h-3 w-3 animate-spin text-indigo-500" />,
+  done: <Check className="h-3 w-3 text-green-500" />,
+  error: <X className="h-3 w-3 text-red-500" />,
 }
 
 export function PipelineDashboard({ projectId }: { projectId: string }) {

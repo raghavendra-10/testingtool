@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
+import { Radio } from 'lucide-react'
 
 interface Endpoint {
   id: string
@@ -42,10 +43,7 @@ export function EndpointList({ projectId }: { projectId: string }) {
 
   if (!eps || eps.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <path d="M6 10h20M6 16h20M6 22h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        <circle cx="24" cy="22" r="4" stroke="currentColor" strokeWidth="2"/>
-      </svg>
+      <Radio className="mb-3 h-8 w-8 text-muted-foreground" />
       <p className="text-sm text-muted-foreground">No endpoints detected yet.</p>
       <p className="mt-1 text-xs text-muted-foreground">Upload an OpenAPI or Postman spec to extract endpoints.</p>
     </div>

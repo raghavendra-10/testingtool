@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useApiClient } from '@/hooks/use-api-client'
 import dynamic from 'next/dynamic'
+import { FileCheck } from 'lucide-react'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react').then(m => m.default), { ssr: false })
 
@@ -84,10 +85,7 @@ export function TestEditor({ projectId }: { projectId: string }) {
 
   if (!tests || tests.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <svg className="mb-3 text-muted-foreground" width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <path d="M8 4h10l6 6v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="2"/>
-        <path d="M12 18l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
+      <FileCheck className="mb-3 h-8 w-8 text-muted-foreground" />
       <p className="text-sm text-muted-foreground">No tests generated yet.</p>
       <p className="mt-1 text-xs text-muted-foreground">Run tests from the Execute tab first.</p>
     </div>
