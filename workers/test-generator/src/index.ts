@@ -2,7 +2,7 @@ import { Worker, Queue } from 'bullmq'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getDb, endpoints, requirements, generatedTests, coverageLinks, executionRuns, credentialReferences } from '@speclyn/db'
 import { eq, inArray } from 'drizzle-orm'
-import { getRedisConnection } from '@speclyn/shared-types'
+import { getRedisConnection, bootstrapWorker } from '@speclyn/shared-types'
 import type { GenerateTestsJobPayload, ExecuteTestsJobPayload } from '@speclyn/shared-types'
 import {
   TestPlannerAgent, TestGeneratorAgent,
@@ -788,4 +788,4 @@ async function generateHIPAATests(
 worker.on('completed', job => console.log(`[test-generator] Job ${job.id} completed`))
 worker.on('failed', (job, err) => console.error(`[test-generator] Job ${job?.id} failed:`, err.message))
 console.log('[test-generator] Worker started')
-process.on('SIGTERM', async () => { await worker.close(); process.exit(0) })
+bootstrapWorker({ name: 'test-generator', workers: [worker] })

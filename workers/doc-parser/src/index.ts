@@ -3,7 +3,7 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { Redis } from 'ioredis'
 import { getDb, sourceDocuments, requirements, endpoints, requirementDuplicates } from '@speclyn/db'
 import { eq, sql } from 'drizzle-orm'
-import { getRedisConnection } from '@speclyn/shared-types'
+import { getRedisConnection, bootstrapWorker } from '@speclyn/shared-types'
 import { extractText, truncateForContext } from './extractor.js'
 import {
   RequirementsAgent,

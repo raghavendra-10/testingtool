@@ -1,7 +1,7 @@
 import { Queue } from 'bullmq'
 import { getDb, schedules, endpoints, environments, executionRuns, projects } from '@speclyn/db'
 import { eq, and, lte, isNull } from 'drizzle-orm'
-import { getRedisConnection } from '@speclyn/shared-types'
+import { getRedisConnection, bootstrapWorker } from '@speclyn/shared-types'
 import type { GenerateTestsJobPayload } from '@speclyn/shared-types'
 
 const POLL_INTERVAL_MS = 30_000 // check every 30 seconds

@@ -8,7 +8,7 @@ import { execa } from 'execa'
 import { getDb, generatedTests, executionRuns, executionSteps, credentialReferences } from '@speclyn/db'
 import { eq, inArray } from 'drizzle-orm'
 import { decryptCredential } from '@speclyn/vault'
-import { getRedisConnection } from '@speclyn/shared-types'
+import { getRedisConnection, bootstrapWorker } from '@speclyn/shared-types'
 import type { ExecuteTestsJobPayload, ClassifyFailuresPayload } from '@speclyn/shared-types'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -217,5 +217,5 @@ const worker = new Worker<ExecuteTestsJobPayload>(
 
 worker.on('completed', job => console.log(`[api-runner] Job ${job.id} completed`))
 worker.on('failed', (job, err) => console.error(`[api-runner] Job ${job?.id} failed:`, err.message))
-console.log('[api-runner] Worker started')
-process.on('SIGTERM', async () => { await worker.close(); await publisher.quit(); process.exit(0) })
+
+bootstrapWorker({ name: 'api-runner', workers: [worker] })

@@ -29,6 +29,7 @@ import { performanceRoutes } from './routes/performance.js'
 import { templateRoutes } from './routes/templates.js'
 import { codeAnalysisRoutes } from './routes/code-analysis.js'
 import { exportRoutes } from './routes/export.js'
+import { webhookInboundRoutes } from './routes/webhooks-inbound.js'
 import rateLimit from '@fastify/rate-limit'
 import { PINO_REDACT_PATHS } from '@speclyn/shared-types'
 
@@ -89,6 +90,7 @@ await app.register(performanceRoutes)
 await app.register(templateRoutes)
 await app.register(codeAnalysisRoutes)
 await app.register(exportRoutes)
+await app.register(webhookInboundRoutes)
 
 app.setErrorHandler((error, _req, reply) => {
   app.log.error(error)

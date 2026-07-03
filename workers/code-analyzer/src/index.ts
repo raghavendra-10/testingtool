@@ -4,9 +4,9 @@ import { mkdtemp, rm, readFile } from 'fs/promises'
 import { join } from 'path'
 import { tmpdir } from 'os'
 import { Redis } from 'ioredis'
-import { getDb, repositoryConnections, codeAnalysisRuns, codeIssues, schemaAnalysisRuns, schemaIssues } from '@speclyn/db'
-import { eq } from 'drizzle-orm'
-import { getRedisConnection } from '@speclyn/shared-types'
+import { getDb, repositoryConnections, codeAnalysisRuns, codeIssues, schemaAnalysisRuns, schemaIssues, repoFileIndex } from '@speclyn/db'
+import { eq, and } from 'drizzle-orm'
+import { getRedisConnection, bootstrapWorker } from '@speclyn/shared-types'
 import type { CodeAnalysisJobPayload, SchemaAnalysisJobPayload } from '@speclyn/shared-types'
 import { decryptCredential } from '@speclyn/vault'
 import { JavaCodeAnalyzerAgent, SchemaAnalyzerAgent } from '@speclyn/agents'
@@ -122,13 +122,36 @@ const codeWorker = new Worker<CodeAnalysisJobPayload>(
       let mediumCount = 0
       let lowCount = 0
 
+      // Load file index for incremental analysis (skip unchanged files)
+      const existingIndex = await db.select({ filePath: repoFileIndex.filePath, lastAnalyzedSha: repoFileIndex.lastAnalyzedSha, blobSha: repoFileIndex.blobSha })
+        .from(repoFileIndex)
+        .where(eq(repoFileIndex.projectId, projectId))
+      const indexMap = new Map(existingIndex.map(f => [f.filePath, f]))
+
+      let filesSkippedIncremental = 0
+
       // Process files in batches of 5 (parallel per batch)
       const BATCH_SIZE = parseInt(process.env['CODE_ANALYSIS_BATCH_SIZE'] ?? '5')
       for (let i = 0; i < filesToAnalyze.length; i += BATCH_SIZE) {
         const batch = filesToAnalyze.slice(i, i + BATCH_SIZE)
 
+        // Checkpoint every 25 files (Spot-safe resume)
+        if (i > 0 && i % 25 === 0) {
+          await db.update(codeAnalysisRuns)
+            .set({ totalIssues, criticalCount, highCount, mediumCount, lowCount })
+            .where(eq(codeAnalysisRuns.id, runId))
+        }
+
         await Promise.all(batch.map(async (filePath) => {
           const relativePath = filePath.replace(tempDir + '/', '')
+
+          // Incremental: skip if file hasn't changed since last analysis
+          const indexed = indexMap.get(relativePath)
+          if (indexed?.lastAnalyzedSha && indexed.lastAnalyzedSha === indexed.blobSha) {
+            filesSkippedIncremental++
+            return
+          }
+
           const content = await readFile(filePath, 'utf-8')
 
           // Skip very small files (<5 lines)
@@ -174,6 +197,14 @@ const codeWorker = new Worker<CodeAnalysisJobPayload>(
               }
             }
           } // end chunks loop
+
+          // Update file index: mark as analyzed with current blobSha
+          if (indexed) {
+            await db.update(repoFileIndex)
+              .set({ lastAnalyzedSha: indexed.blobSha, updatedAt: new Date() })
+              .where(and(eq(repoFileIndex.projectId, projectId), eq(repoFileIndex.filePath, relativePath)))
+              .catch(() => {}) // non-fatal
+          }
         }))
 
         // Publish progress via SSE
@@ -285,7 +316,7 @@ const codeWorker = new Worker<CodeAnalysisJobPayload>(
         totalIssues,
       }))
 
-      console.log(`[code-analyzer] Done — ${filesToAnalyze.length} files, ${totalIssues} issues`)
+      console.log(`[code-analyzer] Done — ${filesToAnalyze.length} files, ${totalIssues} issues (${filesSkippedIncremental} skipped as unchanged)`)
     } catch (err) {
       const errMsg = String(err).replace(/https?:\/\/[^@]+@/g, 'https://***@').slice(0, 1000)
       console.error(`[code-analyzer] Failed:`, errMsg)
@@ -391,10 +422,4 @@ codeWorker.on('failed', (job, err) => console.error(`[code-analyzer] Code job ${
 schemaWorker.on('completed', job => console.log(`[code-analyzer] Schema job ${job.id} completed`))
 schemaWorker.on('failed', (job, err) => console.error(`[code-analyzer] Schema job ${job?.id} failed:`, err.message))
 
-console.log('[code-analyzer] Workers started (code + schema)')
-process.on('SIGTERM', async () => {
-  await codeWorker.close()
-  await schemaWorker.close()
-  await publisher.quit()
-  process.exit(0)
-})
+bootstrapWorker({ name: 'code-analyzer', workers: [codeWorker, schemaWorker] })

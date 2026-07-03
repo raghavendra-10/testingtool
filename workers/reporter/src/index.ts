@@ -143,6 +143,14 @@ const worker = new Worker<ClassifyFailuresPayload>(
       }).catch((err: unknown) => console.warn('[reporter] Coverage webhook error (non-fatal):', err))
     }
 
+    // Update flakiness scores (non-fatal)
+    try {
+      const { updateFlakinessScores } = await import('./flakiness-tracker.js')
+      await updateFlakinessScores(projectId, runId)
+    } catch (err) {
+      console.warn('[reporter] Flakiness scoring failed (non-fatal):', String(err).slice(0, 200))
+    }
+
     // Publish to EventBridge (non-fatal)
     void publishEvent('speclyn.reporter', 'RunCompleted', {
       projectId, runId,

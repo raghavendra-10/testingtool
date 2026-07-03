@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { chromium } from 'playwright'
 import { getDb, requirements, generatedTests, executionRuns, credentialReferences } from '@speclyn/db'
 import { eq } from 'drizzle-orm'
-import { getRedisConnection } from '@speclyn/shared-types'
+import { getRedisConnection, bootstrapWorker } from '@speclyn/shared-types'
 import type { GenerateBrowserTestsJobPayload, ExecuteTestsJobPayload } from '@speclyn/shared-types'
 import { UIExplorerAgent, BrowserTestAgent, AccessibilityTestAgent } from '@speclyn/agents'
 import IORedis from 'ioredis'
@@ -254,4 +254,4 @@ const worker = new Worker<GenerateBrowserTestsJobPayload>(
 worker.on('completed', job => console.log(`[browser-test-generator] Job ${job.id} completed`))
 worker.on('failed', (job, err) => console.error(`[browser-test-generator] Job ${job?.id} failed:`, err.message))
 console.log('[browser-test-generator] Worker started')
-process.on('SIGTERM', async () => { await worker.close(); process.exit(0) })
+bootstrapWorker({ name: 'browser-test-generator', workers: [worker] })
