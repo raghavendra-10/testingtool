@@ -112,8 +112,9 @@ const codeWorker = new Worker<CodeAnalysisJobPayload>(
         return
       }
 
-      // Limit to 100 files max (sorted by path for determinism)
-      const filesToAnalyze = files.slice(0, 100)
+      // Budget-driven analysis: configurable limits replace the old 100-file cap
+      const maxFiles = parseInt(process.env['CODE_ANALYSIS_MAX_FILES'] ?? '2000')
+      const filesToAnalyze = files.slice(0, maxFiles)
 
       let totalIssues = 0
       let criticalCount = 0
@@ -121,8 +122,8 @@ const codeWorker = new Worker<CodeAnalysisJobPayload>(
       let mediumCount = 0
       let lowCount = 0
 
-      // Process files in batches of 3 (parallel per batch)
-      const BATCH_SIZE = 3
+      // Process files in batches of 5 (parallel per batch)
+      const BATCH_SIZE = parseInt(process.env['CODE_ANALYSIS_BATCH_SIZE'] ?? '5')
       for (let i = 0; i < filesToAnalyze.length; i += BATCH_SIZE) {
         const batch = filesToAnalyze.slice(i, i + BATCH_SIZE)
 
@@ -130,43 +131,49 @@ const codeWorker = new Worker<CodeAnalysisJobPayload>(
           const relativePath = filePath.replace(tempDir + '/', '')
           const content = await readFile(filePath, 'utf-8')
 
-          // Skip very large files (>500 lines) and very small files (<5 lines)
+          // Skip very small files (<5 lines)
           const lineCount = content.split('\n').length
-          if (lineCount > 500 || lineCount < 5) return
+          if (lineCount < 5) return
 
-          const result = await codeAgent.run({
-            projectId,
-            fileName: relativePath,
-            fileContent: content,
-            language,
-            analysisTypes,
-          }, projectId)
+          // Large files: chunk on declaration boundaries instead of skipping
+          const { chunkOnDeclarationBoundaries } = await import('./chunker.js')
+          const chunks = chunkOnDeclarationBoundaries(content, relativePath, 400)
 
-          if (result.success && result.data) {
-            for (const issue of result.data.issues) {
-              await db.insert(codeIssues).values({
-                runId,
-                projectId,
-                category: issue.category,
-                severity: issue.severity,
-                title: issue.title,
-                description: issue.description,
-                filePath: relativePath,
-                lineNumber: issue.lineNumber,
-                codeSnippet: issue.codeSnippet,
-                recommendation: issue.recommendation,
-                ruleId: issue.ruleId,
-              })
+          for (const chunk of chunks) {
+            const result = await codeAgent.run({
+              projectId,
+              fileName: `${relativePath} (${chunk.header})`,
+              fileContent: chunk.content,
+              language,
+              analysisTypes,
+            }, projectId)
 
-              totalIssues++
-              switch (issue.severity) {
-                case 'critical': criticalCount++; break
-                case 'high':     highCount++; break
-                case 'medium':   mediumCount++; break
-                case 'low':      lowCount++; break
+            if (result.success && result.data) {
+              for (const issue of result.data.issues) {
+                await db.insert(codeIssues).values({
+                  runId,
+                  projectId,
+                  category: issue.category,
+                  severity: issue.severity,
+                  title: issue.title,
+                  description: issue.description,
+                  filePath: relativePath,
+                  lineNumber: issue.lineNumber,
+                  codeSnippet: issue.codeSnippet,
+                  recommendation: issue.recommendation,
+                  ruleId: issue.ruleId,
+                })
+
+                totalIssues++
+                switch (issue.severity) {
+                  case 'critical': criticalCount++; break
+                  case 'high':     highCount++; break
+                  case 'medium':   mediumCount++; break
+                  case 'low':      lowCount++; break
+                }
               }
             }
-          }
+          } // end chunks loop
         }))
 
         // Publish progress via SSE

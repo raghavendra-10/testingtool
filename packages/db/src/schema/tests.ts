@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, integer, boolean, index } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, varchar, text, timestamp, integer, boolean, index, real } from 'drizzle-orm/pg-core'
 import { projects } from './projects'
 
 export const generatedTests = pgTable('generated_tests', {
@@ -18,6 +18,9 @@ export const generatedTests = pgTable('generated_tests', {
   qualityNotes:  text('quality_notes'),          // AI reasoning + suggestions
   isEdited:      boolean('is_edited').default(false).notNull(), // user edited = locked from regeneration
   suiteId:       uuid('suite_id'),               // optional test suite grouping
+  flakinessScore: real('flakiness_score'),                     // 0-1 flake probability (Phase 5.3)
+  isQuarantined: boolean('is_quarantined').default(false).notNull(), // auto-quarantine if flakiness > 0.3
+  sourceHash:    varchar('source_hash', { length: 64 }),       // SHA-256 of source for dedup (Phase 3)
   createdAt:     timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt:     timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => [

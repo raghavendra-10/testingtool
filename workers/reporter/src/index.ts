@@ -1,7 +1,7 @@
-import { Worker } from 'bullmq'
+import { Worker, Queue } from 'bullmq'
 import { getDb, executionSteps, defects, coverageLinks, generatedTests, requirements, executionRuns } from '@speclyn/db'
 import { eq, and } from 'drizzle-orm'
-import { getRedisConnection, publishEvent, putMetric } from '@speclyn/shared-types'
+import { getRedisConnection, publishEvent, putMetric, bootstrapWorker } from '@speclyn/shared-types'
 import type { ClassifyFailuresPayload } from '@speclyn/shared-types'
 import { FailureClassifierAgent, TestQualityAgent } from '@speclyn/agents'
 import { endpoints } from '@speclyn/db'
@@ -9,6 +9,12 @@ import { fireOutboundWebhooks } from './fire-webhooks.js'
 
 const classifierAgent = new FailureClassifierAgent()
 const qualityAgent = new TestQualityAgent()
+
+function getQualityQueue(): Queue {
+  return new Queue('score-quality', { connection: getRedisConnection() })
+}
+
+interface ScoreQualityPayload { projectId: string; runId: string; testIds: string[] }
 
 const worker = new Worker<ClassifyFailuresPayload>(
   'generate-report',
@@ -99,53 +105,18 @@ const worker = new Worker<ClassifyFailuresPayload>(
       .set({ coveragePercent })
       .where(eq(executionRuns.id, runId))
 
-    // Test quality scoring (non-fatal)
+    // Enqueue quality scoring as a separate async job (non-blocking)
     try {
       const allSteps = await db.select({ testId: executionSteps.testId })
         .from(executionSteps)
         .where(eq(executionSteps.runId, runId))
-
       const testIds = [...new Set(allSteps.map(s => s.testId))]
-      const testsToScore = await db.select().from(generatedTests)
-        .where(and(eq(generatedTests.projectId, projectId)))
-
-      let scored = 0
-      for (const test of testsToScore) {
-        if (!test.codeSnapshot || !testIds.includes(test.id)) continue
-        if (test.qualityScore != null) continue // already scored
-
-        const ep = test.endpointId
-          ? (await db.select({ method: endpoints.method, path: endpoints.path }).from(endpoints).where(eq(endpoints.id, test.endpointId)))[0]
-          : null
-
-        const [link] = await db.select({ requirementId: coverageLinks.requirementId })
-          .from(coverageLinks).where(eq(coverageLinks.testId, test.id))
-        const reqTitle = link
-          ? (await db.select({ title: requirements.title }).from(requirements).where(eq(requirements.id, link.requirementId)))[0]?.title
-          : null
-
-        const result = await qualityAgent.run({
-          projectId,
-          testCode: test.codeSnapshot,
-          testName: test.name,
-          requirementTitle: reqTitle ?? null,
-          endpointMethod: ep?.method ?? 'GET',
-          endpointPath: ep?.path ?? '/',
-        }, projectId)
-
-        if (result.success && result.data) {
-          await db.update(generatedTests)
-            .set({
-              qualityScore: result.data.score,
-              qualityNotes: `${result.data.reasoning}\n\nSuggestions:\n${result.data.suggestions.join('\n')}`,
-            })
-            .where(eq(generatedTests.id, test.id))
-          scored++
-        }
+      if (testIds.length > 0) {
+        await getQualityQueue().add('score', { projectId, runId, testIds }, { attempts: 1 })
+        console.log(`[reporter] Enqueued quality scoring for ${testIds.length} tests`)
       }
-      if (scored > 0) console.log(`[reporter] Scored ${scored} tests for quality`)
     } catch (err) {
-      console.warn('[reporter] Quality scoring failed (non-fatal):', err)
+      console.warn('[reporter] Failed to enqueue quality scoring (non-fatal):', String(err).slice(0, 200))
     }
 
     // Fire outbound webhooks (non-fatal)
@@ -207,5 +178,57 @@ const worker = new Worker<ClassifyFailuresPayload>(
 
 worker.on('completed', job => console.log(`[reporter] Job ${job.id} completed`))
 worker.on('failed', (job, err) => console.error(`[reporter] Job ${job?.id} failed:`, err.message))
-console.log('[reporter] Worker started')
-process.on('SIGTERM', async () => { await worker.close(); process.exit(0) })
+
+// ─── Quality scoring worker (separate queue, non-blocking) ──────────────
+const qualityWorker = new Worker<ScoreQualityPayload>(
+  'score-quality',
+  async (job) => {
+    const { projectId, testIds } = job.data
+    const db = getDb()
+
+    const testsToScore = await db.select().from(generatedTests)
+      .where(and(eq(generatedTests.projectId, projectId)))
+
+    let scored = 0
+    for (const test of testsToScore) {
+      if (!test.codeSnapshot || !testIds.includes(test.id)) continue
+      if (test.qualityScore != null) continue
+
+      const ep = test.endpointId
+        ? (await db.select({ method: endpoints.method, path: endpoints.path }).from(endpoints).where(eq(endpoints.id, test.endpointId)))[0]
+        : null
+
+      const [link] = await db.select({ requirementId: coverageLinks.requirementId })
+        .from(coverageLinks).where(eq(coverageLinks.testId, test.id))
+      const reqTitle = link
+        ? (await db.select({ title: requirements.title }).from(requirements).where(eq(requirements.id, link.requirementId)))[0]?.title
+        : null
+
+      const result = await qualityAgent.run({
+        projectId,
+        testCode: test.codeSnapshot,
+        testName: test.name,
+        requirementTitle: reqTitle ?? null,
+        endpointMethod: ep?.method ?? 'GET',
+        endpointPath: ep?.path ?? '/',
+      }, projectId)
+
+      if (result.success && result.data) {
+        await db.update(generatedTests)
+          .set({
+            qualityScore: result.data.score,
+            qualityNotes: `${result.data.reasoning}\n\nSuggestions:\n${result.data.suggestions.join('\n')}`,
+          })
+          .where(eq(generatedTests.id, test.id))
+        scored++
+      }
+    }
+    if (scored > 0) console.log(`[reporter] Scored ${scored} tests for quality`)
+  },
+  { connection: getRedisConnection(), concurrency: 1 },
+)
+
+qualityWorker.on('completed', job => console.log(`[reporter] Quality job ${job.id} completed`))
+qualityWorker.on('failed', (job, err) => console.error(`[reporter] Quality job ${job?.id} failed:`, err.message))
+
+bootstrapWorker({ name: 'reporter', workers: [worker, qualityWorker] })

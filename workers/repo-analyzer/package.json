@@ -10,6 +10,7 @@
   "dependencies": {
     "@speclyn/agents": "workspace:*",
     "@speclyn/db": "workspace:*",
+    "@speclyn/repo-utils": "workspace:*",
     "@speclyn/shared-types": "workspace:*",
     "@speclyn/vault": "workspace:*",
     "bullmq": "^5.53.3",

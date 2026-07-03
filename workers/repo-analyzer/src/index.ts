@@ -4,15 +4,16 @@ import { mkdtemp, rm } from 'fs/promises'
 import { join } from 'path'
 import { tmpdir } from 'os'
 import { Redis } from 'ioredis'
-import { getDb, endpoints, repositoryConnections } from '@speclyn/db'
+import { getDb, endpoints, repositoryConnections, repoFileIndex, repoServices } from '@speclyn/db'
 import { eq } from 'drizzle-orm'
-import { getRedisConnection } from '@speclyn/shared-types'
+import { getRedisConnection, bootstrapWorker } from '@speclyn/shared-types'
 import type { AnalyzeRepoJobPayload } from '@speclyn/shared-types'
 import { decryptCredential } from '@speclyn/vault'
 import { isOpenApiSpec, isPostmanCollection, parseOpenApi, parsePostman } from '@speclyn/agents'
 import { detectStack } from './stack-detector.js'
 import { extractRoutes } from './route-extractor.js'
 import { readFileSync, existsSync } from 'fs'
+import { discoverFiles, selectAnalyzableFiles, detectWorkspaces } from '@speclyn/repo-utils'
 
 const redisUrl = process.env['REDIS_URL'] ?? 'redis://localhost:6379'
 const publisher = new Redis(redisUrl, { maxRetriesPerRequest: null })
@@ -185,6 +186,42 @@ const worker = new Worker<AnalyzeRepoJobPayload>(
         errorMessage: null,
       }).where(eq(repositoryConnections.id, repositoryConnectionId))
 
+      // ── Phase 1: Build file index (for incremental analysis) ──────────
+      try {
+        const repoFiles = await discoverFiles(tempDir)
+        const analyzable = selectAnalyzableFiles(repoFiles, tempDir)
+
+        // Batch upsert file index (chunks of 500)
+        for (let i = 0; i < analyzable.length; i += 500) {
+          const batch = analyzable.slice(i, i + 500).map(f => ({
+            projectId,
+            filePath: f.path,
+            blobSha: f.blobSha,
+            category: f.category,
+            language: f.language,
+          }))
+          await db.insert(repoFileIndex).values(batch).onConflictDoNothing()
+        }
+        console.log(`[repo-analyzer] Indexed ${analyzable.length} files (${repoFiles.length} total in repo)`)
+
+        // Detect workspaces for monorepo support
+        const workspaces = detectWorkspaces(tempDir)
+        if (workspaces.length > 0) {
+          await db.insert(repoServices)
+            .values(workspaces.map(w => ({
+              projectId,
+              serviceName: w.name,
+              rootPath: w.rootPath,
+              framework: w.framework,
+              language: w.language,
+            })))
+            .onConflictDoNothing()
+          console.log(`[repo-analyzer] Detected ${workspaces.length} services: ${workspaces.map(w => w.name).join(', ')}`)
+        }
+      } catch (indexErr) {
+        console.warn(`[repo-analyzer] File indexing failed (non-fatal):`, String(indexErr).slice(0, 200))
+      }
+
       // Publish WebSocket updates
       await publisher.publish(`project:${projectId}:updates`, JSON.stringify({ type: 'endpoints.updated' }))
       await publisher.publish(`project:${projectId}:updates`, JSON.stringify({ type: 'repositories.updated' }))
@@ -209,5 +246,5 @@ const worker = new Worker<AnalyzeRepoJobPayload>(
 
 worker.on('completed', job => console.log(`[repo-analyzer] Job ${job.id} completed`))
 worker.on('failed', (job, err) => console.error(`[repo-analyzer] Job ${job?.id} failed:`, err.message))
-console.log('[repo-analyzer] Worker started')
-process.on('SIGTERM', async () => { await worker.close(); await publisher.quit(); process.exit(0) })
+
+bootstrapWorker({ name: 'repo-analyzer', workers: [worker] })

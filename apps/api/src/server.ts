@@ -28,6 +28,7 @@ import { oauthRoutes } from './routes/oauth.js'
 import { performanceRoutes } from './routes/performance.js'
 import { templateRoutes } from './routes/templates.js'
 import { codeAnalysisRoutes } from './routes/code-analysis.js'
+import { exportRoutes } from './routes/export.js'
 import rateLimit from '@fastify/rate-limit'
 import { PINO_REDACT_PATHS } from '@speclyn/shared-types'
 
@@ -87,6 +88,7 @@ await app.register(oauthRoutes)
 await app.register(performanceRoutes)
 await app.register(templateRoutes)
 await app.register(codeAnalysisRoutes)
+await app.register(exportRoutes)
 
 app.setErrorHandler((error, _req, reply) => {
   app.log.error(error)

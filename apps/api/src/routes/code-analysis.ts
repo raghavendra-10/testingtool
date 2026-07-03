@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { eq, and, desc } from 'drizzle-orm'
+import { eq, and, desc, sql } from 'drizzle-orm'
 import { Queue } from 'bullmq'
 import {
   getDb, projects, codeAnalysisRuns, codeIssues,
@@ -11,6 +11,7 @@ import type { CodeAnalysisJobPayload, SchemaAnalysisJobPayload } from '@speclyn/
 import { clerkAuth } from '../middleware/clerk-auth.js'
 import type { AuthenticatedRequest } from '../middleware/clerk-auth.js'
 import { logAudit } from '../lib/audit.js'
+import { parsePagination, paginatedResponse } from '../lib/pagination.js'
 
 const TriggerCodeAnalysisBody = z.object({
   language: z.enum(['java', 'python', 'csharp', 'go', 'kotlin', 'typescript', 'javascript']).default('java'),
@@ -85,17 +86,23 @@ export async function codeAnalysisRoutes(app: FastifyInstance): Promise<void> {
   app.get('/api/v1/projects/:projectId/code-analysis', async (req, reply) => {
     const { userId } = req as AuthenticatedRequest
     const { projectId } = req.params as { projectId: string }
+    const { limit, offset } = parsePagination(req.query as Record<string, unknown>)
 
     const db = getDb()
     const [project] = await db.select().from(projects)
       .where(and(eq(projects.id, projectId), eq(projects.ownerId, userId)))
     if (!project) return reply.code(404).send({ success: false, error: { code: 'NOT_FOUND' } })
 
+    const [countResult] = await db.select({ count: sql<number>`count(*)::int` }).from(codeAnalysisRuns)
+      .where(eq(codeAnalysisRuns.projectId, projectId))
+
     const runs = await db.select().from(codeAnalysisRuns)
       .where(eq(codeAnalysisRuns.projectId, projectId))
       .orderBy(desc(codeAnalysisRuns.createdAt))
+      .limit(limit)
+      .offset(offset)
 
-    reply.send({ success: true, data: runs })
+    reply.send(paginatedResponse(runs, countResult?.count ?? 0, limit, offset))
   })
 
   // GET /api/v1/projects/:projectId/code-analysis/:runId — get run with issues
@@ -162,17 +169,23 @@ export async function codeAnalysisRoutes(app: FastifyInstance): Promise<void> {
   app.get('/api/v1/projects/:projectId/schema-analysis', async (req, reply) => {
     const { userId } = req as AuthenticatedRequest
     const { projectId } = req.params as { projectId: string }
+    const { limit, offset } = parsePagination(req.query as Record<string, unknown>)
 
     const db = getDb()
     const [project] = await db.select().from(projects)
       .where(and(eq(projects.id, projectId), eq(projects.ownerId, userId)))
     if (!project) return reply.code(404).send({ success: false, error: { code: 'NOT_FOUND' } })
 
+    const [countResult] = await db.select({ count: sql<number>`count(*)::int` }).from(schemaAnalysisRuns)
+      .where(eq(schemaAnalysisRuns.projectId, projectId))
+
     const runs = await db.select().from(schemaAnalysisRuns)
       .where(eq(schemaAnalysisRuns.projectId, projectId))
       .orderBy(desc(schemaAnalysisRuns.createdAt))
+      .limit(limit)
+      .offset(offset)
 
-    reply.send({ success: true, data: runs })
+    reply.send(paginatedResponse(runs, countResult?.count ?? 0, limit, offset))
   })
 
   // GET /api/v1/projects/:projectId/schema-analysis/:runId — get run with issues

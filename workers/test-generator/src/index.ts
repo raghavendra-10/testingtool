@@ -171,8 +171,13 @@ const worker = new Worker<GenerateTestsJobPayload>(
 
       await emit(pub, projectId, runId, { type: 'run_status', status: 'generating' })
 
-      const eps = await db.select().from(endpoints)
+      const rawEps = await db.select().from(endpoints)
         .where(inArray(endpoints.id, endpointIds))
+
+      // Risk-rank endpoints: auth/write first, simple GET last
+      const { rankEndpointsByRisk } = await import('./risk-ranker.js')
+      const eps = rankEndpointsByRisk(rawEps)
+      console.log(`[test-generator] Endpoints ranked: ${eps.slice(0, 3).map(e => `${e.method} ${e.path} (${e.riskCategory})`).join(', ')}...`)
 
       const reqs = await db.select().from(requirements)
         .where(eq(requirements.projectId, projectId))

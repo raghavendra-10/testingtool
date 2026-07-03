@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from 'sonner'
 import { Providers } from './providers'
+import { CommandPalette } from '@/components/shared/command-palette'
 import './globals.css'
 
 const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans' })
@@ -19,7 +20,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
       <body className="font-sans antialiased">
         <ClerkProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+            <CommandPalette />
+          </Providers>
         </ClerkProvider>
         <Toaster richColors position="bottom-right" />
       </body>
